@@ -1,0 +1,19 @@
+Creatinine:
+  resourceType: Observation
+  code:
+    coding:
+      - code: '20005'
+        display: Creatinine(Serum)
+        system: https://intranet.aumc.nl/labtestcodes
+  referenceRange:
+    - high:
+        value: 104
+      low:
+        value: 64
+      meaning:
+        coding:
+          - code: normal
+            display: Normal Range
+            system: http://hl7.org/fhir/referencerange-meaning
+
+

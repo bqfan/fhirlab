@@ -24,11 +24,13 @@ acronyms:
   Anti-HBe: Hepatitis Be Antibody
   Anti-HBs: Hepatitis B Surface Antibody
   Anti-HCV: Hepatitis C Antibody
-  APT: Stool for Fetal Hemoglobin
+  # APT: Stool for Fetal Hemoglobin
+  # aPT: Stool for Fetal Hemoglobin
   aPTT: Activated Partial Thrombin Time
   ASN: Antibody Screen
   ASO: Antistreptolysin-O
   ASP: Aspirin Resistance
+  AST: Aspartate Amino Transaminase
   AT III: Antithrombin-III Activity
   B12: Vitamin B12
   BMP: Basic Metabolic Panel
@@ -193,9 +195,9 @@ acronyms:
   TT: Thrombin Time
   TYSC: Type and Screen
   UIFE: Urine Immunofixation Electrophoresis
-  UPE:  Prot Elect Urine Protein Electrophoresis
-  UPEP: Prot Elect Urine Protein Electrophoresis
-  Ur: Prot Elect Urine Protein Electrophoresis
+  UPE:  Urine Protein Electrophoresis
+  UPEP: Urine Protein Electrophoresis
+  Ur: Urine Protein Electrophoresis
   VCA: Viral Capsid Antigen 
   VDRL: Venereal Disease Reference Lab (Syphilis Test, CSF)
   Vit A: Vitamin A (Retinol)
@@ -203,13 +205,14 @@ acronyms:
   Vit B12: Vitamin B12
   Vit B2: Vitamin B2 (Riboflavin)
   Vit B6: Vitamin B6 (Pyridoxine)
-  Vit C: Vitamin C
+  Vit C: Vitamin C (Asscorbic acid)
   Vit D: 25-Hydroxy Vitamin D
   VLDL: Very Low Density Lipoprotein
   VMA: Vanillylmandelic Acid
   VZG: Varicella zoster IgG
   WBC: White Blood Cell Count
-  Xa: LMW Heparin
+  # Xa: LMW Heparin
+  Xa: Low molecular weight Heparin
   XM: Type and Crossmatch
   Zn: Zinc
   ZPP: Zinc Protoporphyrin

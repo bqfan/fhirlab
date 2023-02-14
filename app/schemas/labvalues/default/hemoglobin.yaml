@@ -1,0 +1,18 @@
+Hemoglobin:
+  resourceType: Observation
+  code:
+    coding:
+      - code: 718-7
+        display: Hemoglobin [Mass/volume] in Blood
+        system: http://loinc.org
+  referenceRange:
+    - high:
+        code: g/dL
+        system: http://unitsofmeasure.org
+        unit: g/dl
+        value: 10
+      low:
+        code: g/dL
+        system: http://unitsofmeasure.org
+        unit: g/dl
+        value: 7.5
