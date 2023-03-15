@@ -2,14 +2,17 @@ import glob
 import yaml, json
 
 def concatenate(lab_name="default"):
-    filenames = glob.glob("app/schemas/labvalues/" + lab_name + "/*.yaml")
-    labvalues={}
+    filenames = glob.glob("app/schemas/labvalues/" + lab_name + "/*.yaml") + \
+        glob.glob("app/schemas/labvalues/" + lab_name + "/acronyms/*.yaml") + \
+            glob.glob("app/schemas/labvalues/" + lab_name + "/panels/*.yaml")
+            
 
-    for file in filenames:
-        with open(file) as f:
-            labvalue = json.loads(json.dumps(yaml.full_load(f), sort_keys=True, indent=2))
-            labvalues = dict(labvalues, **labvalue)
-    # print("/////////////////////////////////////////////////////")
-    # print(labvalues["Lipid Panel"])
+    labvalues_str = ""
+    for filename in filenames:
+        with open(filename, "r", encoding="latin-1") as f:
+            labvalues_str = labvalues_str + f.read()
+
+    labvalues_dict = yaml.full_load(labvalues_str)
+    labvalues = json.loads(json.dumps(labvalues_dict, sort_keys=True, indent=2))
 
     return labvalues

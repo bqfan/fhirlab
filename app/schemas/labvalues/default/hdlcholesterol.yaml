@@ -1,0 +1,14 @@
+hdlcholesterol: &hdlcholesterol
+  resourceType: Observation
+  code:
+    coding:
+      - system: http://loinc.org
+        code: 2085-9
+        display: HDL Cholesterol
+    text: Cholesterol in HDL
+    referenceRange:
+      - low:
+          value: 1.5
+          unit: mmol/L
+          system: http://unitsofmeasure.org
+          code: mmol/L

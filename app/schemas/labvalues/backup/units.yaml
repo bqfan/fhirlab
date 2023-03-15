@@ -1,0 +1,65 @@
+# Glucose: mg/dL or mmol/L
+# Sodium: mmol/L or mEq/L
+# Potassium: mmol/L or mEq/L
+# Chloride: mmol/L or mEq/L
+# Calcium: mg/dL or mmol/L
+# Magnesium: mg/dL or mmol/L
+# Phosphorus: mg/dL or mmol/L
+# Bicarbonate: mmol/L
+# Blood Urea Nitrogen (BUN): mg/dL or mmol/L
+# Creatinine: mg/dL or µmol/L
+# Blood pH: unitless or pH units
+# pCO2: mmHg or kPa
+# pO2: mmHg or kPa
+# Hemoglobin: g/dL or g/L
+# Hematocrit: % or L/L
+# White Blood Cell (WBC) count: cells/µL or cells/L
+# Platelet count: cells/µL or cells/L
+# International Normalized Ratio (INR): unitless
+# Prothrombin Time (PT): seconds or seconds/INR
+# Activated Partial Thromboplastin Time (aPTT): seconds
+# Total cholesterol: mg/dL or mmol/L
+# High-density lipoprotein (HDL) cholesterol: mg/dL or mmol/L
+# Low-density lipoprotein (LDL) cholesterol: mg/dL or mmol/L
+# Triglycerides: mg/dL or mmol/L
+# Alanine aminotransferase (ALT): U/L
+# Aspartate aminotransferase (AST): U/L
+# Alkaline phosphatase (ALP): U/L
+# Bilirubin: mg/dL or µmol/L
+# C-reactive protein (CRP): mg/dL or mg/L
+# Troponin: ng/mL or µg/L
+# Brain natriuretic peptide (BNP): pg/mL or ng/L
+# Thyroid-stimulating hormone (TSH): µIU/mL
+# Free thyroxine (FT4): ng/dL or pmol/L
+# Prostate-specific antigen (PSA): ng/mL or µg/L
+# Urine specific gravity: unitless
+
+
+# # Glucose: mg/dL or mmol/L
+# # Hemoglobin A1c: % or mmol/mol
+# # Hemoglobin: g/dL or g/L
+# # Hematocrit: % or L/L
+# # Platelets: x10^3/mcL or x10^9/L
+# # White Blood Cells: x10^3/mcL or x10^9/L
+# # Sodium: mmol/L
+# # Potassium: mmol/L
+# # Chloride: mmol/L
+# # Bicarbonate: mmol/L
+# # Blood Urea Nitrogen (BUN): mg/dL
+# # Creatinine: mg/dL or umol/L
+# # Estimated Glomerular Filtration Rate (eGFR): mL/min/1.73m^2
+# # Calcium: mg/dL or mmol/L
+# # Phosphorus: mg/dL or mmol/L
+# # Magnesium: mg/dL or mmol/L
+# # Total Protein: g/dL
+# # Albumin: g/dL
+# # Total Bilirubin: mg/dL
+# # Alkaline Phosphatase: IU/L
+# # Alanine Aminotransferase (ALT): IU/L
+# # Aspartate Aminotransferase (AST): IU/L
+# # Gamma-Glutamyl Transferase (GGT): IU/L
+# # Creatine Kinase (CK): IU/L
+# # Troponin: ng/mL or ng/L
+# # Prothrombin Time (PT): seconds or INR
+# # Partial Thromboplastin Time (PTT): seconds
+# # International Normalized Ratio (INR): unitless

@@ -1,4 +1,4 @@
-Glucose:
+glucose:
   resourceType: Observation
   code:
     coding:

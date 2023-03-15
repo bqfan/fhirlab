@@ -15,5 +15,3 @@ Creatinine:
           - code: normal
             display: Normal Range
             system: http://hl7.org/fhir/referencerange-meaning
-
-

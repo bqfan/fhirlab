@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Response, status, HTTPException, Depends, APIRouter
 from app.utils import labvalues_concatenator
 # from fastapi.middleware.cors import CORSMiddleware
 
@@ -30,15 +30,19 @@ app = FastAPI()
 
 @app.get("/v1/labvalues/")
 def root():
-    vabvalues = labvalues_concatenator.concatenate("default")
-    return vabvalues
+    labvalues = labvalues_concatenator.concatenate("default")
+    return labvalues
 
 @app.get("/v1/labvalues/{id}")
 def labvalue_by_id(id):
-    vabvalue = labvalues_concatenator.concatenate("default")[id]
-    return vabvalue
+    try:
+        labvalue = labvalues_concatenator.concatenate("default")[id]
+    except KeyError:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"lab value: {id} does not exist")
+    return labvalue
 
 @app.get("/v1/labvalues/acronyms/{id}")
 def labvalue_acronyms_by_id(id):
-    vabvalue = labvalues_concatenator.concatenate("default")["acronyms"][id]
-    return vabvalue
+    labvalue = labvalues_concatenator.concatenate("default")["acronyms"][id]
+    return labvalue

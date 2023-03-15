@@ -1,4 +1,4 @@
-Hemoglobin:
+hemoglobin: &hemoglobin
   resourceType: Observation
   code:
     coding:
