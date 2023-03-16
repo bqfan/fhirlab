@@ -1,7 +1,7 @@
 import glob
 import yaml, json
 
-def concatenate(lab_name="default"):
+def concatenate(lab_name="default") -> dict:
     filenames = glob.glob("app/schemas/labvalues/" + lab_name + "/*.yaml") + \
         glob.glob("app/schemas/labvalues/" + lab_name + "/acronyms/*.yaml") + \
             glob.glob("app/schemas/labvalues/" + lab_name + "/panels/*.yaml")
