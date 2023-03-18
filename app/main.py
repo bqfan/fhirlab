@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Response, status, HTTPException, Depends, APIRouter
 from typing import Final
-from app.utils import labvalues_concatenator
+from app.utils import reference_loader
 # from fastapi.middleware.cors import CORSMiddleware
 
 # from . import models
@@ -27,24 +27,46 @@ app = FastAPI()
 # app.include_router(user.router)
 # app.include_router(auth.router)
 # app.include_router(vote.router)
-LABVALUES: Final[dict] = labvalues_concatenator.concatenate("default")
+REFERENCES: Final[dict] = reference_loader.load_references("default")
 
-@app.get("/v1/labvalues/")
-def root():
-    labvalues = labvalues_concatenator.concatenate("default")
-    return labvalues
+@app.get("/v1/References/")
+def root() -> dict:
+    return REFERENCES
 
-@app.get("/v1/labvalues/{id}")
-def labvalue_by_id(id):
-    global labvalues
+@app.get("/v1/References/{resourceType}")
+def root(resourceType: str) -> dict:
+    return REFERENCES[resourceType]
+
+# @app.get("/v1/References/keys")
+# def keys() -> dict:
+#     keys = list(REFERENCES.keys())
+#     return keys
+
+@app.get("/v1/References/{resourceType}/{key}")
+def labvalue_by_key(resourceType: str, key: str) -> dict:
     try:
-        labvalue = LABVALUES[id]
+        labvalue = REFERENCES[resourceType][key]
     except KeyError:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=f"lab value: {id} does not exist")
+                            detail=f"reference key {key} not found")
     return labvalue
 
-@app.get("/v1/labvalues/acronyms/{id}")
-def labvalue_acronyms_by_id(id):
-    labvalue = labvalues_concatenator.concatenate("default")["acronyms"][id]
-    return labvalue
+# @app.get("/v1/References/{resourceType}/{key}/referenceRange")
+# def labvalue_reference_range(resourceType, key) -> dict:
+#     labvalue = labvalue_by_key(key)
+#     try:
+#         reference_range = labvalue["referenceRange"]
+#     except KeyError:
+#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+#                             detail=f"referenceRange not found for lab value key {key}")
+#     return reference_range
+
+# @app.get("/v1/labvalues/{key}/referenceRange/high")
+# def labvalue_reference_range_high(key) -> dict:
+#     reference_range = labvalue_reference_range(key)
+#     try:
+#         high = reference_range["high"]
+#     except KeyError:
+#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+#                             detail=f"referenceRange high not found for lab value key {key}")
+#     return high

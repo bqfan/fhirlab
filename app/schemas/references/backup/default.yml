@@ -1,0 +1,193 @@
+---
+red blood cells: &red_blood_cells
+  code:
+    coding:
+      - system: 'http://loinc.org'
+        code: 789-8
+        display: 'Erythrocytes [#/volume] in Blood by Automated count'
+  referenceRange:
+    - text: ' 12-14 y Male: 4.4 - 5.2  x  10^12/L ; 12-14 y Female: 4.2 - 4.8  x  10^12/L ; 15-17 y Male: 4.6 - 5.4  x  10^12/L ; 15-17 y Female: 4.2 - 4.8  x  10^12/L ; 18-64 y Male: 4.6 - 5.4  x  10^12/L ; 18-64 y Female: 4.0 - 4.8  x  10^12/L ; 65-74 y Male: 4.3 - 5.3  x  10^12/L ; 65-74 y Female: 4.1 - 4.9  x  10^12/L         '
+
+RBC: *red_blood_cells
+
+white blood cells: &white_blood_cells
+WBC: *white_blood_cells
+
+platelets: &platelets
+PLT: *platelets
+
+hemoglobin: &hemoglobin
+Hb: *hemoglobin
+Hgb: *hemoglobin
+HGB: *hemoglobin
+
+
+hematocrit: &hematocrit
+
+
+
+complete_blood_count:
+
+basic_metabolic_panel:
+
+comprehensive_metabolic_panel:
+
+lipid_panel:
+
+thyroid_panel:
+
+cardiac_biomarkers:
+
+sexually_transmitted_infection_tests:
+
+coagulation_panel:
+
+DHEA-sulfate_serum_test:
+
+C-reactive_protein_test:
+
+body_mass_index: &body_mass_index
+  category:
+    - coding:
+        - system: http://terminology.hl7.org/CodeSystem/observation-category
+          code: vital-signs
+          display: Vital Signs
+      text: Vital Signs
+  code:
+    coding:
+      - system: http://loinc.org
+        code: 39156-5
+        display: Body mass index (BMI) [Ratio]
+    text: BMI
+  derivedFrom:
+    - reference: Observation/bodyheight
+      display: Body Height
+    - reference: Observation/example
+      display: Body Weight
+  referenceRange:
+    - valueCodeableConcept:
+        coding:
+        - code: 248342006
+          display: Underweight
+          system: http://snomed.info/sct
+        text: Underweight
+      low:
+        code: kg/m2
+        system: http://unitsofmeasure.org
+        unit: kg/m2
+        value: 20.0
+    - valueCodeableConcept:
+        coding:
+        - code: 43664005
+          display: Normal weight
+          system: http://snomed.info/sct
+        text: Normal weight
+      high:
+        code: kg/m2
+        system: http://unitsofmeasure.org
+        unit: kg/m2
+        value: 24
+      low:
+        code: kg/m2
+        system: http://unitsofmeasure.org
+        unit: kg/m2
+        value: 20
+    - valueCodeableConcept:
+        coding:
+        - code: 162863004
+          display:  Body mass index 25-29 - overweight
+          system: http://snomed.info/sct
+        text: Overweight
+      high:
+        code: kg/m2
+        system: http://unitsofmeasure.org
+        unit: kg/m2
+        value: 29.0
+      low:
+        code: kg/m2
+        system: http://unitsofmeasure.org
+        unit: kg/m2
+        value: 25.0
+    - valueCodeableConcept:
+        coding:
+        - code: 443371000124107
+          display:  Obese class I
+          system: http://snomed.info/sct
+        text: Obese class I
+      high:
+        code: kg/m2
+        system: http://unitsofmeasure.org
+        unit: kg/m2
+        value: 34.9
+      low:
+        code: kg/m2
+        system: http://unitsofmeasure.org
+        unit: kg/m2
+        value: 30.0
+    - valueCodeableConcept:
+        coding:
+        - code: 443381000124105
+          display: Obese class II
+          system: http://snomed.info/sct
+        text: Obese class II
+      high:
+        code: kg/m2
+        system: http://unitsofmeasure.org
+        unit: kg/m2
+        value: 39.9
+      low:
+        code: kg/m2
+        system: http://unitsofmeasure.org
+        unit: kg/m2
+        value: 35.0
+    - valueCodeableConcept:
+        coding:
+        - code: 819948005
+          display: Obese class III
+          system: http://snomed.info/sct
+        text: Obese class III
+      high:
+        code: kg/m2
+        system: http://unitsofmeasure.org
+        unit: kg/m2
+        value: 40.
+BMI: *body_mass_index
+
+glucose_in_blood: &glucose_in_blood
+  code:
+    coding:
+    - system: http://loinc.org
+      code: 15074-8
+      display: Glucose [Moles/volume] in Blood
+  referenceRange:
+  - low:
+      value: 3.1
+      unit: mmol/l
+      system: http://unitsofmeasure.org
+      code: mmol/L
+    high:
+      value: 6.2
+      unit: mmol/l
+      system: http://unitsofmeasure.org
+      code: mmol/L
+BG: *glucose_in_blood
+
+cholesterol:
+  code:
+    coding:
+    - code: 35200-5
+      display: Cholesterol [Mass or Moles/volume] in Serum or Plasma
+      system: http://loinc.org
+    text: Cholesterol [Mass or moles/Vol]
+  referenceRange:
+  - high:
+      code: mmol/L
+      system: http://unitsofmeasure.org
+      unit: mmol/l
+      value: 4.5
+# BMI: *body_mass_index
+# TEST:
+#   BMI:
+#     <<: *body_mass_index
+#   cholesterol:
+#     <<: *cholesterol 

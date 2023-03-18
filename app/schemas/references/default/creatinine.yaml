@@ -1,4 +1,4 @@
-Creatinine:
+creatinine:
   resourceType: Observation
   code:
     coding:
