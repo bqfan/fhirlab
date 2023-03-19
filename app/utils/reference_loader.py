@@ -21,7 +21,6 @@ def load_references(lab_name: str="default") -> dict:
         }
     return references
 
-
 def get_reference_keys(references: dict) -> dict:
     keys = list(references.keys())
     return keys

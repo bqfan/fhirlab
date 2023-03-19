@@ -1,7 +1,8 @@
 from fastapi import FastAPI, Response, status, HTTPException, Depends, APIRouter
-from typing import Final
+from typing import Dict, Final
 from app.utils import reference_loader
-# from fastapi.middleware.cors import CORSMiddleware
+from enum import Enum
+from typing import Optional
 
 # from . import models
 # from .database import engine
@@ -27,46 +28,55 @@ app = FastAPI()
 # app.include_router(user.router)
 # app.include_router(auth.router)
 # app.include_router(vote.router)
+
 REFERENCES: Final[dict] = reference_loader.load_references("default")
+
+class ResourceType(str, Enum):
+    observation = "Observation"
+    bundle = "Bundle"
+
+class ObservationKeys(str, Enum):
+    hemoglobin = "hemoglobin"
+    cholesterol = "cholesterol"
+    triglyceride = "triglyceride"
+    creatinine = "creatinine"
+    hdlcholesterol = "hdlcholesterol"
+    ldlcholesterol = "ldlcholesterol"
+    HDL = "HDL"
+    LDL = "LDL"
+    TGL = "TGL"
+    Trig = "Trig"
+    
+class BundleKeys(str, Enum):
+    lipid_panel = "lipid_panel"
 
 @app.get("/v1/References/")
 def root() -> dict:
     return REFERENCES
 
 @app.get("/v1/References/{resourceType}")
-def root(resourceType: str) -> dict:
-    return REFERENCES[resourceType]
-
-# @app.get("/v1/References/keys")
-# def keys() -> dict:
-#     keys = list(REFERENCES.keys())
-#     return keys
-
-@app.get("/v1/References/{resourceType}/{key}")
-def labvalue_by_key(resourceType: str, key: str) -> dict:
+def references_by_resource_type(resourceType: ResourceType) -> dict:
     try:
-        labvalue = REFERENCES[resourceType][key]
+        references = REFERENCES[resourceType]
+    except KeyError:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                        detail=f"resource type {resourceType} not found")
+    return references
+
+@app.get("/v1/References/Observation/{key}")
+def observation_reference_by_key(key: ObservationKeys) -> dict:
+    try:
+        reference = REFERENCES['Observation'][key]
     except KeyError:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"reference key {key} not found")
-    return labvalue
+    return reference
 
-# @app.get("/v1/References/{resourceType}/{key}/referenceRange")
-# def labvalue_reference_range(resourceType, key) -> dict:
-#     labvalue = labvalue_by_key(key)
-#     try:
-#         reference_range = labvalue["referenceRange"]
-#     except KeyError:
-#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-#                             detail=f"referenceRange not found for lab value key {key}")
-#     return reference_range
-
-# @app.get("/v1/labvalues/{key}/referenceRange/high")
-# def labvalue_reference_range_high(key) -> dict:
-#     reference_range = labvalue_reference_range(key)
-#     try:
-#         high = reference_range["high"]
-#     except KeyError:
-#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-#                             detail=f"referenceRange high not found for lab value key {key}")
-#     return high
+@app.get("/v1/References/Bundle/{key}")
+def bundle_reference_by_key( key: BundleKeys) -> dict:
+    try:
+        reference = REFERENCES['Bundle'][key]
+    except KeyError:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"reference key {key} not found")
+    return reference
