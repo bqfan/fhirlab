@@ -11,13 +11,21 @@ def load_references(lab_name: str="default") -> dict:
     bundles = filter_references_by_resource_type(references_json, 'Bundle')
 
     observation_keys = get_reference_keys(observations)
-    bundle_kyes = get_reference_keys(bundles)
+    bundle_keys = get_reference_keys(bundles)
+
+    observation_keys_dict = {}
+    for key in observation_keys:
+        observation_keys_dict[key] = key
+
+    bundle_keys_dict = {}
+    for key in bundle_keys:
+        bundle_keys_dict[key] = key
 
     references ={
         'Observation': observations,
-        'Observation_keys': observation_keys,
+        'Observation_keys': observation_keys_dict,
         'Bundle': bundles,
-        'Bundle_kyes': bundle_kyes
+        'Bundle_keys': bundle_keys_dict
         }
     return references
 
