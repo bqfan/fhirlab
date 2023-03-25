@@ -1,11 +1,13 @@
-import enum
+
+from __future__ import annotations
 from fastapi import FastAPI, Response, status, HTTPException, Depends, APIRouter
 from typing import Dict, Final, Union
 from app.utils import reference_loader
 from enum import Enum
 from typing import Optional
-from pydantic import BaseModel, create_model
-
+# from pydantic import BaseModel, create_model
+from typing import List
+from pydantic import BaseModel
 # from . import models
 # from .database import engine
 # from .routers import post, user, auth, vote
@@ -32,6 +34,35 @@ app = FastAPI()
 # app.include_router(vote.router)
 
 REFERENCES: Final[dict] = reference_loader.load_references("default")
+
+class CodingItem(BaseModel):
+    code: str
+    display: str
+    system: str
+
+class Code(BaseModel):
+    coding: List[CodingItem]
+
+class High(BaseModel):
+    code: str
+    system: str
+    unit: str
+    value: int
+
+class Low(BaseModel):
+    code: str
+    system: str
+    unit: str
+    value: float
+
+class ReferenceRangeItem(BaseModel):
+    high: High
+    low: Low
+
+class Reference(BaseModel):
+    resourceType: str
+    code: Code
+    referenceRange: List[ReferenceRangeItem]
 
 class ResourceType(str, Enum):
     observation = "Observation"
@@ -111,7 +142,7 @@ def get_reference_by_id(resourceType: ResourceType | None = None, acronyms: Acro
     return keys
 
 @app.get("/v1/References/{key}")
-def get_reference_by_id(key: ReferenceKeys) -> dict:
+def get_reference_by_id(key: ReferenceKeys) -> Reference:
     try:
         reference = (REFERENCES["Observations"] | REFERENCES["ObservationAcronyms"] | REFERENCES["Bundles"] | REFERENCES["BundleAcronyms"])[key]
     except KeyError:
@@ -121,7 +152,7 @@ def get_reference_by_id(key: ReferenceKeys) -> dict:
     return reference
 
 @app.get("/v1/References/{key}/code")
-def get_reference_by_id(id: ObservationKeys) -> dict:
+def get_reference_by_id(key: ObservationKeys) -> CodingItem:
     try:
         referenceCode = (REFERENCES["Observations"] | REFERENCES["ObservationAcronyms"])[key]["code"]
     except KeyError:
@@ -131,7 +162,7 @@ def get_reference_by_id(id: ObservationKeys) -> dict:
     return referenceCode
 
 @app.get("/v1/References/{key}/referenceRange")
-def get_reference_by_id(id: ObservationKeys) -> dict:
+def get_reference_by_id(key: ObservationKeys) -> ReferenceRangeItem:
     try:
         referenceRange = (REFERENCES["Observations"] | REFERENCES["ObservationAcronyms"])[key]["referenceRange"]
     except KeyError:
