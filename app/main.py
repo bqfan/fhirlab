@@ -1,6 +1,6 @@
 import enum
 from fastapi import FastAPI, Response, status, HTTPException, Depends, APIRouter
-from typing import Dict, Final
+from typing import Dict, Final, Union
 from app.utils import reference_loader
 from enum import Enum
 from typing import Optional
@@ -37,39 +37,67 @@ class ResourceType(str, Enum):
     observation = "Observation"
     bundle = "Bundle"
 
+class Acronyms(str, Enum):
+    true = True
+    false = False
+
 class TempEnum(str, Enum):
     pass
 
-ObservationKeys = TempEnum("ObservationKeys", REFERENCES["Observation_keys"])
-BundleKeys = TempEnum("BundleKeys", REFERENCES["Bundle_keys"])
+ObservationKeys = TempEnum("ObservationKeys", REFERENCES["ObservationKeys"] | REFERENCES["ObservationAcronymsKeys"])
 
-@app.get("/v1/References/")
-def root() -> dict:
-    return REFERENCES
+# BundleKeys = TempEnum("BundleKeys", REFERENCES["Bundle_keys"])
+ReferenceKeys = TempEnum("ReferenceKeys", REFERENCES["ObservationKeys"] | REFERENCES["ObservationAcronymsKeys"] | REFERENCES["BundleKeys"] | REFERENCES["BundleAcronymsKeys"])
 
-@app.get("/v1/References/{resourceType}")
-def references_by_resource_type(resourceType: ResourceType) -> dict:
-    try:
-        references = REFERENCES[resourceType]
-    except KeyError:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                        detail=f"resource type {resourceType} not found")
+@app.get("/v1/References")
+def get_references(resourceType: ResourceType | None = None, acronyms: Acronyms | None = None) -> dict:
+    if resourceType == "Observation" and acronyms == "True":
+        references = REFERENCES['ObservationAcronyms']
+    elif resourceType == "Observation" and acronyms == "False":
+        references = REFERENCES['Observations']
+    elif resourceType == "Bundle" and acronyms == "True":
+        references = REFERENCES['BundleAcronyms']
+    elif resourceType == "Bundle" and acronyms == "False":
+        references = REFERENCES['Bundles']
+    elif acronyms == "True":
+        references = REFERENCES['ObservationAcronyms'] | REFERENCES['BundleAcronyms']
+    elif acronyms == "False":
+        references = REFERENCES['Observationss'] | REFERENCES['Bundles']
+    elif resourceType == "Observation":
+        references = REFERENCES['Observations'] | REFERENCES['ObservationAcronyms']
+    elif resourceType == "Bundle":
+        references = REFERENCES['Bundles'] | REFERENCES['BundleAcronyms']
+    else:
+        references = REFERENCES['Observations'] | REFERENCES['ObservationAcronyms'] | REFERENCES['Bundles'] | REFERENCES['BundleAcronyms'] 
+
     return references
 
-@app.get("/v1/References/Observation/{key}")
-def observation_reference_by_key(key: ObservationKeys) -> dict:
+@app.get("/v1/References/{id}")
+def get_reference_by_id(id: ReferenceKeys) -> dict:
     try:
-        reference = REFERENCES["Observation"][key]
+        reference = (REFERENCES["Observations"] | REFERENCES["ObservationAcronyms"] | REFERENCES["Bundles"] | REFERENCES["BundleAcronyms"])[id]
     except KeyError:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=f"reference key {key} not found")
+                            detail=f"reference id {id} not found")
+
     return reference
 
-@app.get("/v1/References/Bundle/{key}")
-def bundle_reference_by_key( key: BundleKeys) -> dict:
+@app.get("/v1/References/{id}/code")
+def get_reference_by_id(id: ObservationKeys) -> dict:
     try:
-        reference = REFERENCES['Bundle'][key]
+        referenceCode = (REFERENCES["Observations"] | REFERENCES["ObservationAcronyms"])[id]["code"]
     except KeyError:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=f"reference key {key} not found")
-    return reference
+                            detail=f"reference code with id {id} not found")
+
+    return referenceCode
+
+@app.get("/v1/References/{id}/referenceRange")
+def get_reference_by_id(id: ObservationKeys) -> dict:
+    try:
+        referenceRange = (REFERENCES["Observations"] | REFERENCES["ObservationAcronyms"])[id]["referenceRange"]
+    except KeyError:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"referenceRange with id {id} not found")
+
+    return referenceRange

@@ -1,5 +1,5 @@
-HDL: *hdlcholesterol
-LDL: *ldlcholesterol
-TGL: *triglyceride
-Trig: *triglyceride
-
+acronyms:
+  HDL: *hdlcholesterol
+  LDL: *ldlcholesterol
+  TGL: *triglyceride
+  Trig: *triglyceride
