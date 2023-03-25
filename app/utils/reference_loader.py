@@ -6,8 +6,6 @@ def load_references(lab_name: str="default") -> dict:
     references_str = cancatenate_yaml_files(lab_name)
     references_dict = yaml.load(references_str, Loader=SafeLoader)
     references_json = json.loads(json.dumps(references_dict))
-   
-    #acronyms = references_json['acronyms']
 
     observations = filter_references_by_resource_type(references_json, 'Observation')
     observation_acronyms = filter_references_by_resource_type(references_json['acronyms'], 'Observation')
@@ -19,37 +17,17 @@ def load_references(lab_name: str="default") -> dict:
     bundle_keys = get_reference_keys(bundles)
     bundle_acronyms_keys = get_reference_keys(bundle_acronyms)
 
-    # print(panel_keys)
-    # print(panel_acronyms_keys)
-
-
-    observation_keys_dict = {}
-    for key in observation_keys:
-        observation_keys_dict[key] = key
-
-    observation_acronyms_keys_dict = {}
-    for key in observation_acronyms_keys:
-        observation_acronyms_keys_dict[key] = key
-
-    bundle_keys_dict = {}
-    for key in bundle_keys:
-        bundle_keys_dict[key] = key
-
-    bundle_acronyms_keys_dict = {}
-    for key in bundle_acronyms_keys:
-        bundle_acronyms_keys_dict[key] = key
-
     references ={
         'Observations': observations,
-        'ObservationKeys': observation_keys_dict,
+        'ObservationKeys': observation_keys,
         'ObservationAcronyms': observation_acronyms,
-        'ObservationAcronymsKeys': observation_acronyms_keys_dict,
+        'ObservationAcronymsKeys': observation_acronyms_keys,
         'Bundles': bundles,
-        'BundleKeys': bundle_keys_dict,
+        'BundleKeys': bundle_keys,
         'BundleAcronyms': bundle_acronyms,
-        'BundleAcronymsKeys': bundle_acronyms_keys_dict
+        'BundleAcronymsKeys': bundle_acronyms_keys
         }
-    #print(references)
+
     return references
 
 def get_reference_keys(references: dict) -> dict:

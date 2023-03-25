@@ -44,10 +44,25 @@ class Acronyms(str, Enum):
 class TempEnum(str, Enum):
     pass
 
-ObservationKeys = TempEnum("ObservationKeys", REFERENCES["ObservationKeys"] | REFERENCES["ObservationAcronymsKeys"])
+observation_keys_dict = {}
+for key in REFERENCES["ObservationKeys"]:
+    observation_keys_dict[key] = key
 
-# BundleKeys = TempEnum("BundleKeys", REFERENCES["Bundle_keys"])
-ReferenceKeys = TempEnum("ReferenceKeys", REFERENCES["ObservationKeys"] | REFERENCES["ObservationAcronymsKeys"] | REFERENCES["BundleKeys"] | REFERENCES["BundleAcronymsKeys"])
+observation_acronyms_keys_dict = {}
+for key in REFERENCES["ObservationAcronymsKeys"]:
+    observation_acronyms_keys_dict[key] = key
+
+bundle_keys_dict = {}
+for key in REFERENCES["BundleKeys"]:
+    bundle_keys_dict[key] = key
+
+bundle_acronyms_keys_dict = {}
+for key in REFERENCES["BundleAcronymsKeys"]:
+    bundle_acronyms_keys_dict[key] = key
+
+ObservationKeys = TempEnum("ObservationKeys", observation_keys_dict | observation_acronyms_keys_dict)
+BundleKeys = TempEnum("BundleKeys", bundle_keys_dict | bundle_acronyms_keys_dict)
+ReferenceKeys = TempEnum("ReferenceKeys", observation_keys_dict | observation_acronyms_keys_dict | bundle_keys_dict | bundle_acronyms_keys_dict)
 
 @app.get("/v1/References")
 def get_references(resourceType: ResourceType | None = None, acronyms: Acronyms | None = None) -> dict:
@@ -72,32 +87,55 @@ def get_references(resourceType: ResourceType | None = None, acronyms: Acronyms 
 
     return references
 
-@app.get("/v1/References/{id}")
-def get_reference_by_id(id: ReferenceKeys) -> dict:
+@app.get("/v1/References/keys")
+def get_reference_by_id(resourceType: ResourceType | None = None, acronyms: Acronyms | None = None) -> list:
+    if resourceType == "Observation" and acronyms == "True":
+        keys = REFERENCES['ObservationAcronymsKeys']
+    elif resourceType == "Observation" and acronyms == "False":
+        keys = REFERENCES['ObservationKeys']
+    elif resourceType == "Observation":
+        keys = REFERENCES['ObservationKeys'] + REFERENCES['ObservationAcronymsKeys']
+    elif resourceType == "Bundle" and acronyms == "True":
+        keys = REFERENCES['BundleAcronymsKeys']
+    elif resourceType == "Bundle" and acronyms == "False":
+        keys = REFERENCES['BundleKeys']
+    elif resourceType == "Bundle":
+        keys = REFERENCES['BundleKeys'] + REFERENCES['BundleAcronymsKeys']
+    elif acronyms == "True":
+        keys = REFERENCES['ObservationAcronymsKeys'] + REFERENCES['BundleAcronymsKeys']
+    elif acronyms == "False":
+        keys = REFERENCES['ObservationKeys'] + REFERENCES['BundleKeys']
+    else:
+        keys = REFERENCES['ObservationKeys'] + REFERENCES['ObservationAcronymsKeys'] + REFERENCES['BundleKeys'] + REFERENCES['BundleAcronymsKeys'] 
+
+    return keys
+
+@app.get("/v1/References/{key}")
+def get_reference_by_id(key: ReferenceKeys) -> dict:
     try:
-        reference = (REFERENCES["Observations"] | REFERENCES["ObservationAcronyms"] | REFERENCES["Bundles"] | REFERENCES["BundleAcronyms"])[id]
+        reference = (REFERENCES["Observations"] | REFERENCES["ObservationAcronyms"] | REFERENCES["Bundles"] | REFERENCES["BundleAcronyms"])[key]
     except KeyError:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=f"reference id {id} not found")
+                            detail=f"reference id {key} not found")
 
     return reference
 
-@app.get("/v1/References/{id}/code")
+@app.get("/v1/References/{key}/code")
 def get_reference_by_id(id: ObservationKeys) -> dict:
     try:
-        referenceCode = (REFERENCES["Observations"] | REFERENCES["ObservationAcronyms"])[id]["code"]
+        referenceCode = (REFERENCES["Observations"] | REFERENCES["ObservationAcronyms"])[key]["code"]
     except KeyError:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=f"reference code with id {id} not found")
+                            detail=f"reference code with key {key} not found")
 
     return referenceCode
 
-@app.get("/v1/References/{id}/referenceRange")
+@app.get("/v1/References/{key}/referenceRange")
 def get_reference_by_id(id: ObservationKeys) -> dict:
     try:
-        referenceRange = (REFERENCES["Observations"] | REFERENCES["ObservationAcronyms"])[id]["referenceRange"]
+        referenceRange = (REFERENCES["Observations"] | REFERENCES["ObservationAcronyms"])[key]["referenceRange"]
     except KeyError:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=f"referenceRange with id {id} not found")
+                            detail=f"referenceRange with key {key} not found")
 
     return referenceRange
