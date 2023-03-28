@@ -92,6 +92,7 @@ for key in REFERENCES["BundleAcronymsKeys"]:
     bundle_acronyms_keys_dict[key] = key
 
 ObservationKeys = TempEnum("ObservationKeys", observation_keys_dict | observation_acronyms_keys_dict)
+ObservationAcronymKeys = TempEnum("ObservationAcronymKeys",  observation_acronyms_keys_dict)
 BundleKeys = TempEnum("BundleKeys", bundle_keys_dict | bundle_acronyms_keys_dict)
 ReferenceKeys = TempEnum("ReferenceKeys", observation_keys_dict | observation_acronyms_keys_dict | bundle_keys_dict | bundle_acronyms_keys_dict)
 
@@ -160,6 +161,16 @@ def get_reference_by_id(key: ObservationKeys) -> CodingItem:
                             detail=f"reference code with key {key} not found")
 
     return referenceCode
+
+@app.get("/v1/References/acronyms/{key}/code/text")
+def get_reference_by_id(key: ObservationAcronymKeys) -> CodingItem:
+    try:
+        referenceCodeText = REFERENCES["ObservationAcronyms"][key]["code"]["text"]
+    except KeyError:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"reference code with key {key} not found")
+
+    return referenceCodeText
 
 @app.get("/v1/References/{key}/referenceRange")
 def get_reference_by_id(key: ObservationKeys) -> ReferenceRangeItem:
