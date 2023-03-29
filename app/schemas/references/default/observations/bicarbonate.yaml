@@ -1,0 +1,22 @@
+bicarbonate: &bicarbonate
+  resourceType: Observation
+  code:
+    coding:
+      - system: http://loinc.org
+        code: 49765-1
+        display: Bicarbonate [Moles/volume] in Serum or Plasma
+    text: Bicarbonate
+  referenceRange:
+    - high:
+        system: http://unitsofmeasure.org
+        code: mmol/L
+        unit: mmol/L
+        value: 28
+      low:
+        system: http://unitsofmeasure.org
+        code: mmol/L
+        unit: mmol/L
+        value: 23
+
+
+

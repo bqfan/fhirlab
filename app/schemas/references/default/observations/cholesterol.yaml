@@ -8,7 +8,7 @@ cholesterol: &cholesterol
     text: Cholesterol
   referenceRange:
     - high:
-        value: 4.5
-        unit: mmol/L
         system: http://unitsofmeasure.org
         code: mmol/L
+        unit: mmol/L
+        value: 4.5

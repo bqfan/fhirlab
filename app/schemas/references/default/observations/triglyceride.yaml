@@ -8,7 +8,9 @@ triglyceride: &triglyceride
     text: Triglyceride
   referenceRange:
     - high:
-        value: 2
-        unit: mmol/L
         system: http://unitsofmeasure.org
         code: mmol/L
+        unit: mmol/L
+        value: 2
+
+

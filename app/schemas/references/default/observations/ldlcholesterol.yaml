@@ -8,7 +8,8 @@ ldlcholesterol: &ldlcholesterol
     text: LDL Chol. (Calc)
   referenceRange:
     - high:
-        value: 3
-        unit: mmol/L
         system: http://unitsofmeasure.org
         code: mmol/L
+        unit: mmol/L
+        value: 3
+

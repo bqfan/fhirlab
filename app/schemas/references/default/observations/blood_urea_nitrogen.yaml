@@ -1,0 +1,22 @@
+blood-urea-nitrogen: &blood-urea-nitrogen
+  resourceType: Observation
+  code:
+    coding:
+      - system: http://loinc.org
+        code: 3094-0
+        display: Urea nitrogen [Mass/volume] in Serum or Plasma
+    text: Blood urea nitrogen
+  referenceRange:
+    - high:
+        system: http://unitsofmeasure.org
+        code: mmol/L
+        unit: mmol/L
+        value: 7.1
+      low:
+        system: http://unitsofmeasure.org
+        code: mmol/L
+        unit: mmol/L
+        value: 2.9
+
+
+

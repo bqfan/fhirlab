@@ -1,19 +1,19 @@
-creatinine:
+calcium: &calcium
   resourceType: Observation
   code:
     coding:
       - system: http://loinc.org
-        code: 2160-0
-        display: Creatinine [Mass/volume] in Serum or Plasma
-    text: Creatinine
+        code: 49765-1
+        display: Calcium [Mass/volume] in Blood
+    text: Calcium
   referenceRange:
     - high:
-        code: mg/dL
         system: http://unitsofmeasure.org
+        code: mg/dL
         unit: mg/dL
-        value: 1.5
+        value: 11
       low:
-        code: mg/dL
         system: http://unitsofmeasure.org
+        code: mg/dL
         unit: mg/dL
-        value: 0.6
+        value: 8
