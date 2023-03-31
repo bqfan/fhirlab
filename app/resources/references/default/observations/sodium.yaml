@@ -1,0 +1,19 @@
+sodium: &sodium
+  resourceType: Observation
+  code:
+    coding:
+      - code: 2947-0
+        display: Sodium [Moles/volume] in Blood
+        system: http://loinc.org
+    text: Sodium
+  referenceRange:
+    - high:
+        code: mmol/L
+        system: http://unitsofmeasure.org
+        unit: mmol/L
+        value: 147
+      low:
+        system: http://unitsofmeasure.org
+        code: mmol/L
+        unit: mmol/L
+        value: 135

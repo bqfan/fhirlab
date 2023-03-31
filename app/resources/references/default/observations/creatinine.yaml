@@ -1,0 +1,19 @@
+creatinine:
+  resourceType: Observation
+  code:
+    coding:
+      - system: http://loinc.org
+        code: 2160-0
+        display: Creatinine [Mass/volume] in Serum or Plasma
+    text: Creatinine
+  referenceRange:
+    - high:
+        code: mg/dL
+        system: http://unitsofmeasure.org
+        unit: mg/dL
+        value: 1.5
+      low:
+        code: mg/dL
+        system: http://unitsofmeasure.org
+        unit: mg/dL
+        value: 0.6
