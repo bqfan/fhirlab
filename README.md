@@ -17,8 +17,8 @@ uvicorn main:app --host 0.0.0.0 --port 8080 --reload
 Build and run the Docker image locally, as follows:
 
 ```
-docker build -t labvalues_api .
-docker run -d -p 8080:80 labvalues_api
+docker build -t labvalues-api .
+docker run -d -p 8080:80 labvalues-api
 ```
 
 In order to run the example server with docker compose, use this:
