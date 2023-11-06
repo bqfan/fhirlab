@@ -1,12 +1,4 @@
-# labtests_api
-
-## How To Use Docker To Make Local Development A Breeze
-
-Docker is a very powerful tool for developing applications that run in the cloud. If you want to get the most out of it, you need to make sure that the way you're running your code locally matches as closely as possible with how it runs in the cloud.
-
-Today I'm going to show you how to do this, using a simple API server in Python as an example.
-
-Video: https://youtu.be/zkMRWDQV4Tg.
+# labvalues-api
 
 ## Usage
 
