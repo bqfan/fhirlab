@@ -47,7 +47,7 @@ class High(BaseModel):
     code: str
     system: str
     unit: str
-    value: int
+    value: float
 
 class Low(BaseModel):
     code: str
@@ -56,8 +56,8 @@ class Low(BaseModel):
     value: float
 
 class ReferenceRangeItem(BaseModel):
-    high: High
-    low: Low
+    high: Optional[High] = None
+    low: Optional[Low] = None
 
 class Reference(BaseModel):
     resourceType: str
