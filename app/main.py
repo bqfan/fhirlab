@@ -7,7 +7,7 @@ from enum import Enum
 from typing import Optional
 # from pydantic import BaseModel, create_model
 from typing import List
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 # from . import models
 # from .database import engine
 # from .routers import post, user, auth, vote
@@ -56,8 +56,12 @@ class Low(BaseModel):
     value: float
 
 class ReferenceRangeItem(BaseModel):
-    high: Optional[High] = None
     low: Optional[Low] = None
+    high: Optional[High] = None
+    normalValue: List[str] = None
+    type: List[str] = None
+    appliesTo: List[List[str]] = None
+    age: Optional[list[int]] = Field(None, ge=0, le=150, min_items=2, max_items=2, description="age", example=[50, 70])
 
 class Reference(BaseModel):
     resourceType: str
