@@ -35,7 +35,7 @@ def get_reference_keys(references: dict) -> dict:
     return keys
 
 def cancatenate_yaml_files(lab_name: str) -> str:
-    filenames = glob.glob("app/resources/references/" + lab_name + "/observations/*.yaml")
+    filenames = glob.glob(f"app/resources/observations/{lab_name}/reference_ranges/*.yaml")
     # filenames = glob.glob("app/resources/references/" + lab_name + "/observations/*.yaml") + \
     #     glob.glob("app/resources/references/" + lab_name + "/bundles/*.yaml") + \
     #         glob.glob("app/resources/references/" + lab_name + "/acronyms/*.yaml") 
