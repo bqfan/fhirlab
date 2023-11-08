@@ -8,6 +8,7 @@ from typing import Optional
 # from pydantic import BaseModel, create_model
 from typing import List
 from pydantic import BaseModel, Field
+from fastapi.middleware.cors import CORSMiddleware
 # from . import models
 # from .database import engine
 # from .routers import post, user, auth, vote
@@ -18,15 +19,15 @@ from pydantic import BaseModel, Field
 
 app = FastAPI()
 
-# origins = ["*"]
+origins = ["*"]
 
-# app.add_middleware(
-#     CORSMiddleware,
-#     allow_origins=origins,
-#     allow_credentials=True,
-#     allow_methods=["*"],
-#     allow_headers=["*"],
-# )
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # app.include_router(post.router)
 # app.include_router(user.router)
