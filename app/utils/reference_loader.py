@@ -8,24 +8,24 @@ def load_references(lab_name: str="default") -> dict:
     references_json = json.loads(json.dumps(references_dict))
 
     observations = filter_references_by_resource_type(references_json, 'Observation')
-    observation_acronyms = filter_references_by_resource_type(references_json['acronyms'], 'Observation')
+    #observation_acronyms = filter_references_by_resource_type(references_json['acronyms'], 'Observation')
     observation_keys = get_reference_keys(observations)
-    observation_acronyms_keys = get_reference_keys(observation_acronyms)
+    # observation_acronyms_keys = get_reference_keys(observation_acronyms)
     
-    bundles = filter_references_by_resource_type(references_json, 'Bundle')
-    bundle_acronyms = filter_references_by_resource_type(references_json['acronyms'], 'Bundle')
-    bundle_keys = get_reference_keys(bundles)
-    bundle_acronyms_keys = get_reference_keys(bundle_acronyms)
+    # bundles = filter_references_by_resource_type(references_json, 'Bundle')
+    # bundle_acronyms = filter_references_by_resource_type(references_json['acronyms'], 'Bundle')
+    # bundle_keys = get_reference_keys(bundles)
+    # bundle_acronyms_keys = get_reference_keys(bundle_acronyms)
 
     references ={
         'Observations': observations,
         'ObservationKeys': observation_keys,
-        'ObservationAcronyms': observation_acronyms,
-        'ObservationAcronymsKeys': observation_acronyms_keys,
-        'Bundles': bundles,
-        'BundleKeys': bundle_keys,
-        'BundleAcronyms': bundle_acronyms,
-        'BundleAcronymsKeys': bundle_acronyms_keys
+        # 'ObservationAcronyms': observation_acronyms,
+        # 'ObservationAcronymsKeys': observation_acronyms_keys,
+        # 'Bundles': bundles,
+        # 'BundleKeys': bundle_keys,
+        # 'BundleAcronyms': bundle_acronyms,
+        # 'BundleAcronymsKeys': bundle_acronyms_keys
         }
 
     return references
@@ -35,9 +35,10 @@ def get_reference_keys(references: dict) -> dict:
     return keys
 
 def cancatenate_yaml_files(lab_name: str) -> str:
-    filenames = glob.glob("app/resources/references/" + lab_name + "/observations/*.yaml") + \
-        glob.glob("app/resources/references/" + lab_name + "/bundles/*.yaml") + \
-            glob.glob("app/resources/references/" + lab_name + "/acronyms/*.yaml") 
+    filenames = glob.glob(f"app/resources/observations/{lab_name}/reference_ranges/*.yaml")
+    # filenames = glob.glob("app/resources/references/" + lab_name + "/observations/*.yaml") + \
+    #     glob.glob("app/resources/references/" + lab_name + "/bundles/*.yaml") + \
+    #         glob.glob("app/resources/references/" + lab_name + "/acronyms/*.yaml") 
 
     references_str = ""
     for filename in filenames:
