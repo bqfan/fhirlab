@@ -1,14 +1,9 @@
-
-from __future__ import annotations
-from fastapi import FastAPI, Response, status, HTTPException, Depends, APIRouter
-from typing import Dict, Final, Union
+from fastapi import FastAPI, status, HTTPException, Depends
+from typing import Final, List
 from app.utils import reference_loader
-from enum import Enum
-from typing import Optional
 # from pydantic import BaseModel, create_model
-from typing import List
-from pydantic import BaseModel, Field
 from fastapi.middleware.cors import CORSMiddleware
+from app.schemas.observations import CodingItem, Code, High, Low, ReferenceRangeItem, Reference, Acronyms, TempEnum
 # from . import models
 # from .database import engine
 # from .routers import post, user, auth, vote
@@ -35,47 +30,6 @@ app.add_middleware(
 # app.include_router(vote.router)
 
 REFERENCES: Final[dict] = reference_loader.load_references("default")
-
-class CodingItem(BaseModel):
-    code: str
-    display: str
-    system: str
-
-class Code(BaseModel):
-    coding: List[CodingItem]
-    text: str
-
-class High(BaseModel):
-    code: str
-    system: str
-    unit: str
-    value: float
-
-class Low(BaseModel):
-    code: str
-    system: str
-    unit: str
-    value: float
-
-class ReferenceRangeItem(BaseModel):
-    low: Optional[Low] = None
-    high: Optional[High] = None
-    normalValue: List[str] = None
-    type: List[str] = None
-    appliesTo: List[List[str]] = None
-    age: Optional[list[int]] = Field(None, ge=0, le=150, min_items=2, max_items=2, description="age", example=[50, 70])
-
-class Reference(BaseModel):
-    resourceType: str
-    code: Code
-    referenceRange: List[ReferenceRangeItem]
-
-class Acronyms(str, Enum):
-    true = True
-    false = False
-
-class TempEnum(str, Enum):
-    pass
 
 observation_keys_dict = {}
 for key in REFERENCES["ObservationKeys"]:
