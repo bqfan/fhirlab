@@ -1,4 +1,4 @@
-# labvalues-api
+# labtest-api
 
 ## Environments
 
