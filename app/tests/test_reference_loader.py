@@ -1,7 +1,7 @@
 # test_reference_loader.py
 import pytest
-from ..src.utilities import reference_loader
-from ..src.api.models.schemas.references import Reference
+from app.src.utilities import reference_loader
+from app.src.api.models.schemas.references import Reference
 from typing import Final, List
 
 def test_reference_loader():
