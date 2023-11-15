@@ -1,6 +1,7 @@
 import glob
 import yaml, json
 from yaml import SafeLoader
+from app.src.api.models.schemas.references import Reference
 
 def load_references(lab_name: str="default") -> dict:
     references_str = cancatenate_yaml_files(lab_name)
@@ -55,3 +56,7 @@ def filter_references_by_resource_type(references: dict, resource_type: str) -> 
                 filtered_references[key] = val
 
     return filtered_references
+
+def validate_data(data, reference_model):
+    reference = reference_model(**data)
+    return reference

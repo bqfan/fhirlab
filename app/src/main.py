@@ -43,6 +43,10 @@ for key in REFERENCES["ObservationKeys"]:
 
 ReferenceKeys = TempEnum("ReferenceKeys", observation_keys_dict)
 
+@app.get("/")
+async def read_main():
+    return {"msg": "LabTest API"}
+
 @app.get("/v1/References")
 def get_references() -> dict:
     return REFERENCES['Observations']

@@ -27,10 +27,10 @@ class Low(BaseModel):
 class ReferenceRangeItem(BaseModel):
     low: Optional[Low] = None
     high: Optional[High] = None
-    normalValue: List[str] = None
-    type: List[str] = None
-    appliesTo: List[List[str]] = None
-    age: Optional[list[int]] = Field(None, json_schema_extra={ "ge":0, "le":150, "min_length":2, "max_length":2, "description":"age", "example":[50, 70] })
+    # normalValue: List[str] = None
+    # type: List[str] = None
+    # appliesTo: List[List[str]] = None
+    # age: Optional[list[int]] = Field(None, json_schema_extra={ "ge":0, "le":150, "min_length":2, "max_length":2, "description":"age", "example":[50, 70] })
 
 class Reference(BaseModel):
     resourceType: str
