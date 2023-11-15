@@ -1,8 +1,7 @@
 # test_reference_loader.py
-import pytest
 from app.src.utilities import reference_loader
 from app.src.api.models.schemas.references import Reference
-from typing import Final, List
+from typing import Final
 
 def test_reference_loader():
     REFERENCES: Final[dict] = reference_loader.load_references("default")
