@@ -16,6 +16,22 @@ def test_read_main():
     assert response.status_code == 200
     assert response.json() == {"msg": "LabTest API"}
 
+def test_references():
+    response = client.get("/v1/References")
+    response_content_json = json.loads(response.content)
+    reference_model = Reference
+
+    assert response.status_code == 200
+
+    for key, value in REFERENCES["Observations"].items():
+        validated_reference = reference_loader.validate_data(value, reference_model)
+        assert isinstance(validated_reference, Reference)
+        assert(is_subset(value, response_content_json[key]))
+        
+    for key, value in response_content_json.items():
+        validated_reference = reference_loader.validate_data(value, reference_model)
+        assert isinstance(validated_reference, Reference)
+
 def test_reference():
     response = client.get("/v1/References/glucose")
     response_content_json = json.loads(response.content)
