@@ -3,9 +3,7 @@ from fastapi.testclient import TestClient
 from app.src.main import app
 from app.src.utilities import reference_loader
 from app.src.api.models.schemas.references import Reference
-from typing import Final
-
-from typing import Final
+from typing import Final, List
 import json
 
 REFERENCES: Final[dict] = reference_loader.load_references("default")
@@ -31,6 +29,14 @@ def test_references():
     for key, value in response_content_json.items():
         validated_reference = reference_loader.validate_data(value, reference_model)
         assert isinstance(validated_reference, Reference)
+
+def test_reference_keys():
+    response = client.get("/v1/References/keys")
+    response_content_json =json.loads(response.content)
+
+    assert isinstance(REFERENCES['ObservationKeys'], List)
+    assert isinstance(response_content_json, List)
+    assert(REFERENCES['ObservationKeys'] == response_content_json)
 
 def test_reference():
     response = client.get("/v1/References/glucose")
