@@ -1,8 +1,8 @@
 # test_main.py
 from fastapi.testclient import TestClient
-from app.src.main import app
-from app.src.utilities import reference_loader
-from app.src.api.models.schemas.references import Code, Reference, ReferenceRangeItem
+from backend.src.main import app
+from backend.src.utilities import reference_loader
+from backend.src.api.models.schemas.references import Code, Reference, ReferenceRangeItem
 from typing import Final, List
 import json
 

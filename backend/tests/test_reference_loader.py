@@ -1,6 +1,6 @@
 # test_reference_loader.py
-from app.src.utilities import reference_loader
-from app.src.api.models.schemas.references import Reference
+from backend.src.utilities import reference_loader
+from backend.src.api.models.schemas.references import Reference
 from typing import Final
 
 def test_reference_loader():

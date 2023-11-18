@@ -12,15 +12,15 @@ pip install -r requirements.txt
 This is how you run the code locally (without Docker):
 
 ```
-uvicorn app.src.main:app --host 0.0.0.0 --port 8080 --reload
+uvicorn backend.src.main:app --host 0.0.0.0 --port 8080 --reload
 ```
 ### Run labtest-api in Docker 
 As a first step, install Docker (see: https://www.docker.com) and install the requirements:
 Build and run the Docker image locally, as follows:
 
 ```
-docker build -t labvalues-api .
-docker run -d -p 8080:80 labvalues-api
+docker build -t labtest-api .
+docker run -d -p 8080:80 labtest-api
 ```
 
 In order to run the example server with docker compose, use this:
