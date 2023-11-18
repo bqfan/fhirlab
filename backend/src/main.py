@@ -55,8 +55,8 @@ def get_references() -> dict:
 def get_reference_by_id() -> list:
     return REFERENCES['ObservationKeys']
 
-@app.get("/v1/References/{key}")
-def get_reference_by_id(key: ReferenceKeys) -> Reference:
+@app.get("/v1/References/{key}", response_model=Reference, response_model_exclude_unset=True)
+def get_reference_by_id(key: ReferenceKeys):
     try:
         reference = (REFERENCES["Observations"])[key]
     except KeyError:
