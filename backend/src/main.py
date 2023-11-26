@@ -1,6 +1,6 @@
 from fastapi import FastAPI, status, HTTPException, Depends
 from typing import Final, List
-from backend.src.utilities import reference_loader
+from backend.src.utilities import resource_loader
 # from pydantic import BaseModel, create_model
 from fastapi.middleware.cors import CORSMiddleware
 from backend.src.api.models.schemas.references import CodingItem, Code, High, Low, ReferenceRangeItem, Reference, Acronyms, TempEnum
@@ -29,7 +29,7 @@ app.add_middleware(
 # app.include_router(auth.router)
 # app.include_router(vote.router)
 
-REFERENCES: Final[dict] = reference_loader.load_references("default")
+REFERENCES: Final[dict] = resource_loader.load_resources("default")
 
 observation_keys_dict = {}
 for key in REFERENCES["ObservationKeys"]:

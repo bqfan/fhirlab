@@ -17,4 +17,3 @@ potassium: &potassium
         system: http://unitsofmeasure.org
         unit: mmol/L
         value: 3.6
-

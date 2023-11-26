@@ -3,7 +3,7 @@ import yaml, json
 from yaml import SafeLoader
 from backend.src.api.models.schemas.references import Reference
 
-def load_references(lab_name: str="default") -> dict:
+def load_resources(lab_name: str="default") -> dict:
     references_str = cancatenate_yaml_files(lab_name)
     references_dict = yaml.load(references_str, Loader=SafeLoader)
     references_json = json.loads(json.dumps(references_dict))
@@ -36,7 +36,7 @@ def get_reference_keys(references: dict) -> dict:
     return keys
 
 def cancatenate_yaml_files(lab_name: str) -> str:
-    filenames = glob.glob(f"backend/src/api/resources/observations/{lab_name}/references/*.yaml")
+    filenames = glob.glob(f"backend/src/api/resources/{lab_name}/references/*.yaml")
     # filenames = glob.glob("app/resources/references/" + lab_name + "/observations/*.yaml") + \
     #     glob.glob("app/resources/references/" + lab_name + "/bundles/*.yaml") + \
     #         glob.glob("app/resources/references/" + lab_name + "/acronyms/*.yaml") 

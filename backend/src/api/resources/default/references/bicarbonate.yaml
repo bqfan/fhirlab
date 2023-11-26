@@ -17,6 +17,3 @@ bicarbonate: &bicarbonate
         code: mmol/L
         unit: mmol/L
         value: 23
-
-
-
