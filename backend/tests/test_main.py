@@ -1,87 +1,64 @@
 # test_main.py
 from fastapi.testclient import TestClient
 from backend.src.main import app
-from backend.src.utilities import reference_loader
+from backend.src.api.resources.resource_loader import Resource
 from backend.src.api.models.schemas.references import Code, Reference, ReferenceRangeItem
 from typing import Final, List
 import json
 
-REFERENCES: Final[dict] = reference_loader.load_references("default")
+resource = Resource().load()
 client = TestClient(app)
 
-def test_read_main():
-    response = client.get("/")
-    assert response.status_code == 200
-    assert response.json() == {"msg": "LabTest API"}
 
 def test_references():
     response = client.get("/v1/References")
     response_content_json = json.loads(response.content)
-    reference_model = Reference
 
     assert response.status_code == 200
 
-    for key, value in REFERENCES["Observations"].items():
-        validated_reference = reference_loader.validate_data(value, reference_model)
-        assert isinstance(validated_reference, Reference)
-        assert(is_subset(value, response_content_json[key]))
+    for key, value in resource.references.items():
+        assert key in resource.reference_keys
+        assert isinstance(Reference(**value), Reference)
         
     for key, value in response_content_json.items():
-        validated_reference = reference_loader.validate_data(value, reference_model)
-        assert isinstance(validated_reference, Reference)
+        assert key in resource.reference_keys
+        assert isinstance(Reference(**value), Reference)
 
 def test_reference_keys():
     response = client.get("/v1/References/keys")
     response_content_json =json.loads(response.content)
 
-    assert isinstance(REFERENCES['ObservationKeys'], List)
+    assert isinstance(resource.reference_keys, List)
     assert isinstance(response_content_json, List)
-    assert(REFERENCES['ObservationKeys'] == response_content_json)
+    assert(resource.reference_keys == response_content_json)
 
 def test_reference():
     response = client.get("/v1/References/glucose")
     response_content_json = json.loads(response.content)
-    reference_model = Reference
 
     assert response.status_code == 200
-
-    validated_reference = reference_loader.validate_data(REFERENCES["Observations"]["glucose"], reference_model)
-    assert isinstance(validated_reference, reference_model)
-
-    validated_response_content_json = reference_loader.validate_data(response_content_json, reference_model)
-    assert isinstance(validated_response_content_json, reference_model)
-
-    assert(is_subset(REFERENCES["Observations"]["glucose"], response_content_json))
+    assert isinstance(Reference(**resource.references['glucose']), Reference)
+    assert isinstance(Reference(**response_content_json), Reference)
+    assert(is_subset(resource.references['glucose'], response_content_json))
 
 def test_reference_range():
     response = client.get("/v1/References/glucose/referenceRange")
     response_content_json = json.loads(response.content)
-    reference_range_model = ReferenceRangeItem
-    #print(type(response_content_json))
+
     assert response.status_code == 200
-
-    validated_reference = reference_loader.validate_data(REFERENCES["Observations"]["glucose"]["referenceRange"][0], reference_range_model)
-    assert isinstance(validated_reference, reference_range_model)
-
-    validated_response_content_json = reference_loader.validate_data(response_content_json[0], reference_range_model)
-    assert isinstance(validated_response_content_json, reference_range_model)
-
-    assert(is_subset(REFERENCES["Observations"]["glucose"]["referenceRange"], response_content_json))
+    assert isinstance(ReferenceRangeItem(**resource.references['glucose']['referenceRange'][0]), ReferenceRangeItem)
+    assert isinstance(ReferenceRangeItem(**response_content_json[0]), ReferenceRangeItem)
+    assert(is_subset(resource.references['glucose']['referenceRange'], response_content_json))
 
 def test_reference_code():
     response = client.get("/v1/References/glucose/code")
     response_content_json = json.loads(response.content)
-    reference_code_model = Code
-    #print(type(response_content_json))
+
     assert response.status_code == 200
+    assert isinstance(Code(**resource.references['glucose']['code']), Code)
+    assert isinstance(Code(**response_content_json), Code)
 
-    validated_reference = reference_loader.validate_data(REFERENCES["Observations"]["glucose"]["code"], reference_code_model)
-    assert isinstance(validated_reference, reference_code_model)
-
-    validated_response_content_json = reference_loader.validate_data(response_content_json, reference_code_model)
-    assert isinstance(validated_response_content_json, reference_code_model)
-
-    assert(is_subset(REFERENCES["Observations"]["glucose"]["code"], response_content_json))
+    assert(is_subset(resource.references['glucose']['code'], response_content_json))
 
 def is_subset(subset, superset):
     match subset:

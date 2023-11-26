@@ -1,6 +1,6 @@
 from fastapi import FastAPI, status, HTTPException, Depends
 from typing import Final, List
-from backend.src.utilities import reference_loader
+from backend.src.api.resources.resource_loader import Resource
 # from pydantic import BaseModel, create_model
 from fastapi.middleware.cors import CORSMiddleware
 from backend.src.api.models.schemas.references import CodingItem, Code, High, Low, ReferenceRangeItem, Reference, Acronyms, TempEnum
@@ -29,19 +29,13 @@ app.add_middleware(
 # app.include_router(auth.router)
 # app.include_router(vote.router)
 
-REFERENCES: Final[dict] = reference_loader.load_references("default")
+resource = Resource().load()
 
-observation_keys_dict = {}
-for key in REFERENCES["ObservationKeys"]:
-    observation_keys_dict[key] = key
+reference_keys = {}
+for key in resource.reference_keys:
+    reference_keys[key] = key
 
-ObservationKeys = TempEnum("ObservationKeys", observation_keys_dict)
-
-observation_keys_dict = {}
-for key in REFERENCES["ObservationKeys"]:
-    observation_keys_dict[key] = key
-
-ReferenceKeys = TempEnum("ReferenceKeys", observation_keys_dict)
+ReferenceKeys = TempEnum("ReferenceKeys", reference_keys)
 
 @app.get("/")
 async def read_main():
@@ -49,27 +43,27 @@ async def read_main():
 
 @app.get("/v1/References")
 def get_references() -> dict:
-    return REFERENCES['Observations']
+    return resource.references
 
 @app.get("/v1/References/keys")
-def get_reference_by_id() -> list:
-    return REFERENCES['ObservationKeys']
+def get_reference_keys() -> list:
+    return resource.reference_keys
 
 @app.get("/v1/References/{key}", response_model=Reference, response_model_exclude_unset=True)
-def get_reference_by_id(key: ReferenceKeys):
+def get_reference_by_key(key: ReferenceKeys):
     try:
-        reference = (REFERENCES["Observations"])[key]
+        reference = resource.references[key]
     except KeyError:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=f"reference id {key} not found")
+                            detail=f"reference key {key} not found")
 
     return reference
 
 
 @app.get("/v1/References/{key}/referenceRange")
-def get_reference_by_id(key: ObservationKeys) -> List[ReferenceRangeItem]:
+def get_reference_range_by_key(key: ReferenceKeys, response_model=List[ReferenceRangeItem], response_model_exclude_unset=True):
     try:
-        referenceRange = (REFERENCES["Observations"])[key]["referenceRange"]
+        referenceRange = resource.references[key]["referenceRange"]
     except KeyError:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"referenceRange with key {key} not found")
@@ -77,9 +71,9 @@ def get_reference_by_id(key: ObservationKeys) -> List[ReferenceRangeItem]:
     return referenceRange
 
 @app.get("/v1/References/{key}/code")
-def get_reference_by_id(key: ObservationKeys) -> Code:
+def get_reference_code_by_key(key: ReferenceKeys) -> Code:
     try:
-        referenceCode = (REFERENCES["Observations"])[key]["code"]
+        referenceCode = resource.references[key]["code"]
     except KeyError:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"reference code with key {key} not found")

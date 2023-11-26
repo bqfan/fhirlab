@@ -12,5 +12,3 @@ triglyceride: &triglyceride
         code: mmol/L
         unit: mmol/L
         value: 2
-
-
