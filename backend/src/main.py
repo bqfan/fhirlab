@@ -34,12 +34,14 @@ resource = Resource().load()
 reference_keys = {}
 for key in resource.reference_keys:
     reference_keys[key] = key
-
+print(reference_keys)
 ReferenceKeys = TempEnum("ReferenceKeys", reference_keys)
 
-@app.get("/")
-async def read_main():
-    return {"msg": "LabTest API"}
+bundle_keys = {}
+for key in resource.bundle_keys:
+    bundle_keys[key] = key
+print(bundle_keys)
+BundleKeys = TempEnum("BundleKeys", bundle_keys)
 
 @app.get("/v1/References")
 def get_references() -> dict:
@@ -58,7 +60,6 @@ def get_reference_by_key(key: ReferenceKeys):
                             detail=f"reference key {key} not found")
 
     return reference
-
 
 @app.get("/v1/References/{key}/referenceRange")
 def get_reference_range_by_key(key: ReferenceKeys, response_model=List[ReferenceRangeItem], response_model_exclude_unset=True):
@@ -79,3 +80,21 @@ def get_reference_code_by_key(key: ReferenceKeys) -> Code:
                             detail=f"reference code with key {key} not found")
 
     return referenceCode
+
+@app.get("/v1/Bundles")
+def get_bundles() -> dict:
+    return resource.bundles
+
+@app.get("/v1/Bundles/keys")
+def get_bundle_keys() -> list:
+    return resource.bundle_keys
+
+@app.get("/v1/Bundles/{key}")
+def get_bundle_by_key(key: BundleKeys):
+    try:
+        bundle = resource.bundles[key]
+    except KeyError:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"bundle key {key} not found")
+
+    return bundle

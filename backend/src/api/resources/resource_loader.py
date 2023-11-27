@@ -9,13 +9,16 @@ class Resource:
         self.references = {}
         self.reference_keys = {}
         self.bundles = {}
+        self.bundle_keys = {}
         self.acronyms = []
 
     def load(self) -> dict:
-
         self.references = self.__get_references()
         self.reference_keys = self.__get_reference_keys()
-    
+        self.bundles = self.__get_bundles()
+        self.bundle_keys = self.__get_bundle_keys()
+        # print(self.references)
+        #print(self.bundles)
         return self
 
     def __get_references(self):
@@ -27,6 +30,16 @@ class Resource:
 
     def __get_reference_keys(self):
         return list(self.references.keys())
+
+    def __get_bundles(self):
+        bundles_path = f"backend/src/api/resources/{self.lab_name}/bundles"
+        bundles_str = self.__concat_yaml_files(bundles_path)
+        bundles_dict = yaml.load(bundles_str, Loader=SafeLoader)
+
+        return bundles_dict
+
+    def __get_bundle_keys(self):
+        return list(self.bundles.keys())
 
     def __concat_yaml_files(self, yaml_file_path) -> str:
         filenames = glob.glob(f"{yaml_file_path}/*.yaml")

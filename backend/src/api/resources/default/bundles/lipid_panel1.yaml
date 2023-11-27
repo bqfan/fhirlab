@@ -1,4 +1,4 @@
-lipid_panel:
+lipid_panel1:
   resourceType: Bundle
   id: lipids
   type: collection
