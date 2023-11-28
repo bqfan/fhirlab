@@ -3,7 +3,7 @@ from typing import Final, List
 from backend.src.api.resources.resource_loader import Resource
 # from pydantic import BaseModel, create_model
 from fastapi.middleware.cors import CORSMiddleware
-from backend.src.api.models.schemas.references import CodingItem, Code, High, Low, ReferenceRangeItem, Reference, Acronyms, TempEnum
+from backend.src.api.models.schemas.references import CodingItem, Code, High, Low, ReferenceRangeItem, Reference, Bundle, Acronyms, TempEnum
 # from . import models
 # from .database import engine
 # from .routers import post, user, auth, vote
@@ -91,7 +91,7 @@ def get_bundles() -> dict:
 def get_bundle_keys() -> list:
     return resource.bundle_keys
 
-@app.get("/Bundles/{key}")
+@app.get("/Bundles/{key}", response_model=Bundle, response_model_exclude_unset=True)
 def get_bundle_by_key(key: BundleKeys):
     __bundle_formatter()
 
