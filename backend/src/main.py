@@ -1,5 +1,7 @@
 from fastapi import FastAPI, status, HTTPException, Depends
 from typing import Final, List
+
+from fastapi.responses import RedirectResponse
 from backend.src.api.resources.resource_loader import Resource
 # from pydantic import BaseModel, create_model
 from fastapi.middleware.cors import CORSMiddleware
@@ -42,6 +44,13 @@ for key in resource.bundle_keys:
     bundle_keys[key] = key
 
 BundleKeys = TempEnum("BundleKeys", bundle_keys)
+
+acronym_keys = {}
+for key in resource.acronyms["acronyms"]:
+    acronym_keys[key] = key
+
+AcronymKeys = TempEnum("BundleKeys", acronym_keys)
+
 
 @app.get("/References")
 def get_references() -> dict:
@@ -102,6 +111,16 @@ def get_bundle_by_key(key: BundleKeys):
                             detail=f"bundle key {key} not found")
 
     return bundle
+
+@app.get("/Acronyms")
+def get_acronyms() -> dict:
+    return resource.acronyms
+
+@app.get("/Acronyms/{key}")
+def get_reference_by_acronym(key: AcronymKeys):
+    reference_key = resource.acronyms["acronyms"][key]
+
+    return get_reference_by_key(reference_key)
 
 def __bundle_formatter():
     for _, value in resource.bundles.items():
