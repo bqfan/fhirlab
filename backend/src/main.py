@@ -34,24 +34,24 @@ resource = Resource().load()
 reference_keys = {}
 for key in resource.reference_keys:
     reference_keys[key] = key
-print(reference_keys)
+
 ReferenceKeys = TempEnum("ReferenceKeys", reference_keys)
 
 bundle_keys = {}
 for key in resource.bundle_keys:
     bundle_keys[key] = key
-print(bundle_keys)
+
 BundleKeys = TempEnum("BundleKeys", bundle_keys)
 
-@app.get("/v1/References")
+@app.get("/References")
 def get_references() -> dict:
     return resource.references
 
-@app.get("/v1/References/keys")
+@app.get("/References/keys")
 def get_reference_keys() -> list:
     return resource.reference_keys
 
-@app.get("/v1/References/{key}", response_model=Reference, response_model_exclude_unset=True)
+@app.get("/References/{key}", response_model=Reference, response_model_exclude_unset=True)
 def get_reference_by_key(key: ReferenceKeys):
     try:
         reference = resource.references[key]
@@ -61,7 +61,7 @@ def get_reference_by_key(key: ReferenceKeys):
 
     return reference
 
-@app.get("/v1/References/{key}/referenceRange")
+@app.get("/References/{key}/referenceRange")
 def get_reference_range_by_key(key: ReferenceKeys, response_model=List[ReferenceRangeItem], response_model_exclude_unset=True):
     try:
         referenceRange = resource.references[key]["referenceRange"]
@@ -71,7 +71,7 @@ def get_reference_range_by_key(key: ReferenceKeys, response_model=List[Reference
 
     return referenceRange
 
-@app.get("/v1/References/{key}/code")
+@app.get("/References/{key}/code")
 def get_reference_code_by_key(key: ReferenceKeys) -> Code:
     try:
         referenceCode = resource.references[key]["code"]
@@ -81,16 +81,20 @@ def get_reference_code_by_key(key: ReferenceKeys) -> Code:
 
     return referenceCode
 
-@app.get("/v1/Bundles")
+@app.get("/Bundles")
 def get_bundles() -> dict:
+    __bundle_formatter()
+
     return resource.bundles
 
-@app.get("/v1/Bundles/keys")
+@app.get("/Bundles/keys")
 def get_bundle_keys() -> list:
     return resource.bundle_keys
 
-@app.get("/v1/Bundles/{key}")
+@app.get("/Bundles/{key}")
 def get_bundle_by_key(key: BundleKeys):
+    __bundle_formatter()
+
     try:
         bundle = resource.bundles[key]
     except KeyError:
@@ -98,3 +102,10 @@ def get_bundle_by_key(key: BundleKeys):
                             detail=f"bundle key {key} not found")
 
     return bundle
+
+def __bundle_formatter():
+    for _, value in resource.bundles.items():
+        for entry in value['entry']:
+            entry['fullUrl'] = entry['fullUrl'].replace('BaseUrl', resource.base_url)
+            if isinstance(entry['resource'], str):
+                entry['resource'] = resource.references[entry['resource']]

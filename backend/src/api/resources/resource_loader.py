@@ -4,7 +4,10 @@ from yaml import SafeLoader
 from backend.src.api.models.schemas.references import Reference
 
 class Resource:
+    BaseUrl = "http://localhost:8080"
+
     def __init__(self, lab_name: str="default"):
+        self.base_url = "http://localhost:8080"
         self.lab_name = lab_name
         self.references = {}
         self.reference_keys = {}
@@ -17,8 +20,6 @@ class Resource:
         self.reference_keys = self.__get_reference_keys()
         self.bundles = self.__get_bundles()
         self.bundle_keys = self.__get_bundle_keys()
-        # print(self.references)
-        #print(self.bundles)
         return self
 
     def __get_references(self):
