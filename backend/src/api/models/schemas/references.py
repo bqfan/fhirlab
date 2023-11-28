@@ -37,6 +37,9 @@ class Reference(BaseModel):
     code: Code
     referenceRange: List[ReferenceRangeItem]
 
+class Bundle(BaseModel):
+    resourceType: str
+    entry: list
 class Acronyms(str, Enum):
     true = True
     false = False

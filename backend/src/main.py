@@ -1,9 +1,10 @@
 from fastapi import FastAPI, status, HTTPException, Depends
 from typing import Final, List
+from fastapi.responses import RedirectResponse
 from backend.src.api.resources.resource_loader import Resource
 # from pydantic import BaseModel, create_model
 from fastapi.middleware.cors import CORSMiddleware
-from backend.src.api.models.schemas.references import CodingItem, Code, High, Low, ReferenceRangeItem, Reference, Acronyms, TempEnum
+from backend.src.api.models.schemas.references import CodingItem, Code, High, Low, ReferenceRangeItem, Reference, Bundle, Acronyms, TempEnum
 # from . import models
 # from .database import engine
 # from .routers import post, user, auth, vote
@@ -37,19 +38,28 @@ for key in resource.reference_keys:
 
 ReferenceKeys = TempEnum("ReferenceKeys", reference_keys)
 
-@app.get("/")
-async def read_main():
-    return {"msg": "LabTest API"}
+bundle_keys = {}
+for key in resource.bundle_keys:
+    bundle_keys[key] = key
 
-@app.get("/v1/References")
+BundleKeys = TempEnum("BundleKeys", bundle_keys)
+
+acronym_keys = {}
+for key in resource.acronyms["acronyms"]:
+    acronym_keys[key] = key
+
+AcronymKeys = TempEnum("BundleKeys", acronym_keys)
+
+@app.get("/References")
 def get_references() -> dict:
     return resource.references
 
-@app.get("/v1/References/keys")
+@app.get("/References/keys")
 def get_reference_keys() -> list:
     return resource.reference_keys
 
-@app.get("/v1/References/{key}", response_model=Reference, response_model_exclude_unset=True)
+@app.get("/References/{key}", response_model=Reference, response_model_exclude_unset=True)
+
 def get_reference_by_key(key: ReferenceKeys):
     try:
         reference = resource.references[key]
@@ -59,8 +69,7 @@ def get_reference_by_key(key: ReferenceKeys):
 
     return reference
 
-
-@app.get("/v1/References/{key}/referenceRange")
+@app.get("/References/{key}/referenceRange")
 def get_reference_range_by_key(key: ReferenceKeys, response_model=List[ReferenceRangeItem], response_model_exclude_unset=True):
     try:
         referenceRange = resource.references[key]["referenceRange"]
@@ -70,7 +79,7 @@ def get_reference_range_by_key(key: ReferenceKeys, response_model=List[Reference
 
     return referenceRange
 
-@app.get("/v1/References/{key}/code")
+@app.get("/References/{key}/code")
 def get_reference_code_by_key(key: ReferenceKeys) -> Code:
     try:
         referenceCode = resource.references[key]["code"]
@@ -79,3 +88,42 @@ def get_reference_code_by_key(key: ReferenceKeys) -> Code:
                             detail=f"reference code with key {key} not found")
 
     return referenceCode
+
+@app.get("/Bundles")
+def get_bundles() -> dict:
+    __bundle_formatter()
+
+    return resource.bundles
+
+@app.get("/Bundles/keys")
+def get_bundle_keys() -> list:
+    return resource.bundle_keys
+
+@app.get("/Bundles/{key}", response_model=Bundle, response_model_exclude_unset=True)
+def get_bundle_by_key(key: BundleKeys):
+    __bundle_formatter()
+
+    try:
+        bundle = resource.bundles[key]
+    except KeyError:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"bundle key {key} not found")
+
+    return bundle
+
+@app.get("/Acronyms")
+def get_acronyms() -> dict:
+    return resource.acronyms
+
+@app.get("/Acronyms/{key}")
+def get_reference_by_acronym(key: AcronymKeys):
+    reference_key = resource.acronyms["acronyms"][key]
+
+    return get_reference_by_key(reference_key)
+
+def __bundle_formatter():
+    for _, value in resource.bundles.items():
+        for entry in value['entry']:
+            entry['fullUrl'] = entry['fullUrl'].replace('BaseUrl', resource.base_url)
+            if isinstance(entry['resource'], str):
+                entry['resource'] = resource.references[entry['resource']]
