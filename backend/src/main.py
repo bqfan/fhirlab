@@ -1,6 +1,5 @@
 from fastapi import FastAPI, status, HTTPException, Depends
 from typing import Final, List
-
 from fastapi.responses import RedirectResponse
 from backend.src.api.resources.resource_loader import Resource
 # from pydantic import BaseModel, create_model
@@ -51,7 +50,6 @@ for key in resource.acronyms["acronyms"]:
 
 AcronymKeys = TempEnum("BundleKeys", acronym_keys)
 
-
 @app.get("/References")
 def get_references() -> dict:
     return resource.references
@@ -61,6 +59,7 @@ def get_reference_keys() -> list:
     return resource.reference_keys
 
 @app.get("/References/{key}", response_model=Reference, response_model_exclude_unset=True)
+
 def get_reference_by_key(key: ReferenceKeys):
     try:
         reference = resource.references[key]
