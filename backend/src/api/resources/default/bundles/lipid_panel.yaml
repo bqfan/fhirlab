@@ -18,10 +18,10 @@ lipid_panel:
               display: Lipid panel with direct LDL - Serum or Plasma
           text: Lipid Panel
     - fullUrl: BaseUrl/References/cholesterol
-      resource: cholesterol
+      resource: *cholesterol
     - fullUrl: BaseUrl/References/triglyceride
-      resource: triglyceride
+      resource: *triglyceride
     - fullUrl: BaseUrl/References/hdlcholesterol
-      resource: hdlcholesterol
+      resource: *hdlcholesterol
     - fullUrl: BaseUrl/References/ldlcholesterol
-      resource: ldlcholesterol
+      resource: *ldlcholesterol
