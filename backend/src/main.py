@@ -45,7 +45,7 @@ for key in resource.bundle_keys:
 BundleKeys = TempEnum("BundleKeys", bundle_keys)
 
 acronym_keys = {}
-for key in resource.acronyms["acronyms"]:
+for key in resource.acronyms:
     acronym_keys[key] = key
 
 AcronymKeys = TempEnum("BundleKeys", acronym_keys)
@@ -59,7 +59,6 @@ def get_reference_keys() -> list:
     return resource.reference_keys
 
 @app.get("/References/{key}", response_model=Reference, response_model_exclude_unset=True)
-
 def get_reference_by_key(key: ReferenceKeys):
     try:
         reference = resource.references[key]
@@ -101,8 +100,6 @@ def get_bundle_keys() -> list:
 
 @app.get("/Bundles/{key}", response_model=Bundle, response_model_exclude_unset=True)
 def get_bundle_by_key(key: BundleKeys):
-    __bundle_formatter()
-
     try:
         bundle = resource.bundles[key]
     except KeyError:
@@ -117,9 +114,13 @@ def get_acronyms() -> dict:
 
 @app.get("/Acronyms/{key}")
 def get_reference_by_acronym(key: AcronymKeys):
-    reference_key = resource.acronyms["acronyms"][key]
+    try:
+        acronym_value = resource.acronyms[key]
+    except KeyError:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"acronym key {key} not found")
 
-    return get_reference_by_key(reference_key)
+    return get_reference_by_key(acronym_value)
 
 def __bundle_formatter():
     for _, value in resource.bundles.items():
