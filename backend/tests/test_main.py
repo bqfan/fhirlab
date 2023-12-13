@@ -3,7 +3,7 @@ from fastapi.testclient import TestClient
 from backend.src.main import app
 from backend.src.api.resources.resource_loader import Resource
 from backend.src.api.models.schemas.references import Bundle, Code, Reference, ReferenceRangeItem
-from typing import Final, List
+from typing import List
 import json
 
 resource = Resource().load()
@@ -17,20 +17,21 @@ def test_references():
     assert response.status_code == 200
 
     for key, value in resource.references.items():
-        assert key in resource.reference_keys
+        assert key in resource.references.keys()
         assert isinstance(Reference(**value), Reference)
         
     for key, value in response_content_json.items():
-        assert key in resource.reference_keys
+        assert key in resource.references.keys()
         assert isinstance(Reference(**value), Reference)
 
 def test_reference_keys():
     response = client.get("/References/keys")
     response_content_json =json.loads(response.content)
 
-    assert isinstance(resource.reference_keys, List)
+    print(type(resource.references.keys()))
+    assert isinstance(resource.references.keys(), type({}.keys()))
     assert isinstance(response_content_json, List)
-    assert(resource.reference_keys == response_content_json)
+    assert(list(resource.references.keys()) == response_content_json)
 
 def test_reference():
     response = client.get("/References/glucose")
@@ -67,11 +68,11 @@ def test_bundles():
     assert response.status_code == 200
 
     for key, value in resource.bundles.items():
-        assert key in resource.bundle_keys
+        assert key in resource.bundles.keys()
         assert isinstance(Bundle(**value), Bundle)
         
     for key, value in response_content_json.items():
-        assert key in resource.bundle_keys
+        assert key in resource.bundles.keys()
         assert isinstance(Bundle(**value), Bundle)
 
 def test_bundle_keys():
@@ -79,9 +80,9 @@ def test_bundle_keys():
     response_content_json =json.loads(response.content)
 
     assert response.status_code == 200
-    assert isinstance(resource.bundle_keys, List)
+    assert isinstance(resource.bundles.keys(), type({}.keys()))
     assert isinstance(response_content_json, List)
-    assert(resource.bundle_keys == response_content_json)
+    assert(list(resource.bundles.keys()) == response_content_json)
 
 def test_acronyms():
     response = client.get("/Acronyms")
@@ -97,11 +98,11 @@ def test_acronym_by_key():
     acronym_response_content_json = json.loads(acronym_response.content)
     assert acronym_response.status_code == 200
 
-    reference_response = client.get(f"/References/{resource.acronyms['HDL']}")
+    reference_response = client.get(f"/References/{resource.acronyms['HDL']['reference']}")
     reference_response_content_json = json.loads(reference_response.content)
     assert reference_response.status_code == 200
 
-    assert isinstance(resource.acronyms['HDL'], str)
+    assert isinstance(resource.acronyms['HDL']['reference'], str)
     assert isinstance(Reference(**acronym_response_content_json), Reference)
     assert isinstance(Reference(**reference_response_content_json), Reference)
     assert(acronym_response_content_json == reference_response_content_json)

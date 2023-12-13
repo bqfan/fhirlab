@@ -33,13 +33,13 @@ app.add_middleware(
 resource = Resource().load()
 
 reference_keys = {}
-for key in resource.reference_keys:
+for key in resource.references.keys():
     reference_keys[key] = key
 
 ReferenceKeys = TempEnum("ReferenceKeys", reference_keys)
 
 bundle_keys = {}
-for key in resource.bundle_keys:
+for key in resource.bundles.keys():
     bundle_keys[key] = key
 
 BundleKeys = TempEnum("BundleKeys", bundle_keys)
@@ -56,7 +56,7 @@ def get_references() -> dict:
 
 @app.get("/References/keys")
 def get_reference_keys() -> list:
-    return resource.reference_keys
+    return resource.references.keys()
 
 @app.get("/References/{key}", response_model=Reference, response_model_exclude_unset=True)
 def get_reference_by_key(key: ReferenceKeys):
@@ -96,7 +96,7 @@ def get_bundles() -> dict:
 
 @app.get("/Bundles/keys")
 def get_bundle_keys() -> list:
-    return resource.bundle_keys
+    return resource.bundles.keys()
 
 @app.get("/Bundles/{key}", response_model=Bundle, response_model_exclude_unset=True)
 def get_bundle_by_key(key: BundleKeys):
@@ -113,14 +113,20 @@ def get_acronyms() -> dict:
     return resource.acronyms
 
 @app.get("/Acronyms/{key}")
-def get_reference_by_acronym(key: AcronymKeys):
+def get_acronym_by_key(key: AcronymKeys):
     try:
-        acronym_value = resource.acronyms[key]
+        acronym = resource.acronyms[key]
+
     except KeyError:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"acronym key {key} not found")
+    if 'reference' in acronym:
+        return get_reference_by_key(acronym['reference'])
+    elif 'bundle' in acronym:
+        return get_bundle_by_key(acronym['bundle'])
+    else:
+        raise HTTPException(status_code=404, detail="not found")
 
-    return get_reference_by_key(acronym_value)
 
 def __bundle_formatter():
     for _, value in resource.bundles.items():

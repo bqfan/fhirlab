@@ -6,58 +6,47 @@ from backend.src.api.models.schemas.references import Reference
 class Resource:
     BaseUrl = "http://localhost:8080"
 
-    def __init__(self, organization: str="default"):
+    def __init__(self):
         self.base_url = "http://localhost:8080"
-        self.organization = organization
+        self.organization = ""
         self.references = {}
-        self.reference_keys = {}
         self.bundles = {}
-        self.bundle_keys = {}
-        self.acronyms = []
+        self.acronyms = {}
 
-    def load(self) -> dict:
-        self.references = self.__get_references()
-        self.reference_keys = self.__get_reference_keys()
-        self.bundles = self.__get_bundles()
-        self.bundle_keys = self.__get_bundle_keys()
-        self.acronyms = self.__get_acronyms()
+    def load(self, organization: str="default") -> dict:
+        resources = self.__load_resources(organization)
 
+        self.organization = organization
+        self.references = self.__get_references(resources)
+        self.bundles = self.__get_bundles(resources)
+        self.acronyms = self.__get_acronyms(resources)
+        
         return self
 
-    def __get_resources(self, organization: str):
+    def __load_resources(self, organization: str):
         resource_files = glob.glob(f"backend/src/api/resources/{organization}/references/*.yaml") + \
-            glob.glob(f"backend/src/api/resources/{organization}/bundles/*.yaml")
+            glob.glob(f"backend/src/api/resources/{organization}/bundles/*.yaml") + \
+                glob.glob(f"backend/src/api/resources/{organization}/acronyms/*.yaml")
 
         resource_yaml_files = self.__concat_yaml_files(resource_files)
         resources_dict = yaml.load(resource_yaml_files, Loader=SafeLoader)
 
         return resources_dict
 
-    def __get_references(self):
-        resources_dict = self.__get_resources("default")
+    def __get_references(self, resources: dict):
+        references = self.filter_resources_by_resource_type(resources, "Observation")
 
-        observations = self.filter_resources_by_resource_type(resources_dict, "Observation")
+        return references
 
-        return observations
-
-    def __get_reference_keys(self):
-        return list(self.references.keys())
-
-    def __get_bundles(self):
-        resources_dict = self.__get_resources("default")
-        bundles = self.filter_resources_by_resource_type(resources_dict, "Bundle")
+    def __get_bundles(self, resources: dict):
+        bundles = self.filter_resources_by_resource_type(resources, "Bundle")
 
         return bundles
 
-    def __get_bundle_keys(self):
-        return list(self.bundles.keys())
+    def __get_acronyms(self, resources: dict):
+        acronyms = self.filter_resources_by_resource_type(resources, "Acronym")
 
-    def __get_acronyms(self):
-        acronym_files = glob.glob(f"backend/src/api/resources/{self.organization}/acronyms/*.yaml")
-        acronyms_str = self.__concat_yaml_files(acronym_files)
-        acronyms_dict = yaml.load(acronyms_str, Loader=SafeLoader)
-
-        return acronyms_dict
+        return acronyms
 
     def __concat_yaml_files(self, yaml_files) -> str:
         yaml_str = ""
