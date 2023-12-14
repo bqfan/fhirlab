@@ -1,0 +1,19 @@
+chloride: &chloride
+  resourceType: Observation
+  code:
+    coding:
+      - system: http://loinc.org
+        code: 2075-0
+        display: Chloride [Moles/volume] in Serum or Plasma
+    text: Chloride
+  referenceRange:
+    - high:
+        system: http://unitsofmeasure.org
+        code: mmol/L
+        unit: mmol/L
+        value: 106
+      low:
+        system: http://unitsofmeasure.org
+        code: mmol/L
+        unit: mmol/L
+        value: 98

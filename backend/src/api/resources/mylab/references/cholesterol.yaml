@@ -1,0 +1,14 @@
+cholesterol: &cholesterol
+  resourceType: Observation
+  code:
+    coding:
+      - system: http://loinc.org
+        code: 35200-5
+        display: Cholesterol [Moles/volume] in Serum or Plasma
+    text: Cholesterol
+  referenceRange:
+    - high:
+        system: http://unitsofmeasure.org
+        code: mmol/L
+        unit: mmol/L
+        value: 4.5

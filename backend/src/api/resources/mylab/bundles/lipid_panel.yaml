@@ -1,0 +1,27 @@
+lipid_panel:
+  resourceType: Bundle
+  id: lipids
+  type: collection
+  entry:
+    - fullUrl: BaseUrl/DiagnosticReport/lipids
+      resource:
+        resourceType: DiagnosticReport
+        id: lipids
+        category:
+          - coding:
+              - system: http://terminology.hl7.org/CodeSystem/v2-0074
+                code: HM
+        code:
+          coding:
+            - system: http://loinc.org
+              code: 57698-3
+              display: Lipid panel with direct LDL - Serum or Plasma
+          text: Lipid Panel
+    - fullUrl: BaseUrl/References/cholesterol
+      resource: *cholesterol
+    - fullUrl: BaseUrl/References/triglyceride
+      resource: *triglyceride
+    - fullUrl: BaseUrl/References/hdlcholesterol
+      resource: *hdlcholesterol
+    - fullUrl: BaseUrl/References/ldlcholesterol
+      resource: *ldlcholesterol
