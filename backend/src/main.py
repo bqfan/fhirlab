@@ -50,7 +50,7 @@ for key in resource.acronyms:
 
 AcronymKeys = TempEnum("BundleKeys", acronym_keys)
 
-@app.post("/Reference/{key}")
+@app.post("/Observation/_references/{key}")
 async def evaluate_reference(key: ReferenceKeys, observation_payload: ObservationPayload):
     reference = get_reference_by_key(key)
     reference_range = get_reference_range_by_key(key)[0]
@@ -118,15 +118,29 @@ async def evaluate_reference(key: ReferenceKeys, observation_payload: Observatio
 
     return reference
 
-@app.get("/References")
+@app.get("/Observation/_references")
 def get_references() -> dict:
     return resource.references
 
-@app.get("/References/keys")
+@app.get("/Observation/_references/_keys")
 def get_reference_keys() -> list:
     return resource.reference_keys
 
-@app.get("/References/{key}", response_model=Reference, response_model_exclude_unset=True)
+@app.get("/Observation/_references/_acronyms")
+def get_acronyms() -> dict:
+    return resource.acronyms
+
+@app.get("/Observation/_references/_acronyms/{key}")
+def get_reference_by_acronym(key: AcronymKeys):
+    try:
+        acronym_value = resource.acronyms[key]
+    except KeyError:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"acronym key {key} not found")
+
+    return get_reference_by_key(acronym_value)
+
+@app.get("/Observation/_references/{key}", response_model=Reference, response_model_exclude_unset=True)
 def get_reference_by_key(key: ReferenceKeys):
     try:
         reference = resource.references[key]
@@ -136,7 +150,7 @@ def get_reference_by_key(key: ReferenceKeys):
 
     return reference
 
-@app.get("/References/{key}/referenceRange", response_model=list[ReferenceRangeItem], response_model_exclude_unset=True)
+@app.get("/Observation/_references/{key}/_referenceRange", response_model=list[ReferenceRangeItem], response_model_exclude_unset=True)
 def get_reference_range_by_key(key: ReferenceKeys):
     try:
         referenceRange = resource.references[key]["referenceRange"]
@@ -146,7 +160,7 @@ def get_reference_range_by_key(key: ReferenceKeys):
 
     return referenceRange
 
-@app.get("/References/{key}/code")
+@app.get("/Observation/_references/{key}/_code")
 def get_reference_code_by_key(key: ReferenceKeys) -> Code:
     try:
         referenceCode = resource.references[key]["code"]
@@ -156,17 +170,17 @@ def get_reference_code_by_key(key: ReferenceKeys) -> Code:
 
     return referenceCode
 
-@app.get("/Bundles")
+@app.get("/Bundles/_references")
 def get_bundles() -> dict:
     __bundle_formatter()
 
     return resource.bundles
 
-@app.get("/Bundles/keys")
+@app.get("/Bundles/_keys")
 def get_bundle_keys() -> list:
     return resource.bundle_keys
 
-@app.get("/Bundles/{key}", response_model=Bundle, response_model_exclude_unset=True)
+@app.get("/Bundles/{key}/_references", response_model=Bundle, response_model_exclude_unset=True)
 def get_bundle_by_key(key: BundleKeys):
     try:
         __bundle_formatter()
@@ -176,20 +190,6 @@ def get_bundle_by_key(key: BundleKeys):
                             detail=f"bundle key {key} not found")
 
     return bundle
-
-@app.get("/Acronyms")
-def get_acronyms() -> dict:
-    return resource.acronyms
-
-@app.get("/Acronyms/{key}")
-def get_reference_by_acronym(key: AcronymKeys):
-    try:
-        acronym_value = resource.acronyms[key]
-    except KeyError:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=f"acronym key {key} not found")
-
-    return get_reference_by_key(acronym_value)
 
 def __bundle_formatter():
     for _, value in resource.bundles.items():

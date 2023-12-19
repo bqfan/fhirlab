@@ -11,7 +11,7 @@ client = TestClient(app)
 
 
 def test_references():
-    response = client.get("/References")
+    response = client.get("/Observation/_references")
     response_content_json = json.loads(response.content)
 
     assert response.status_code == 200
@@ -25,15 +25,38 @@ def test_references():
         assert isinstance(Reference(**value), Reference)
 
 def test_reference_keys():
-    response = client.get("/References/keys")
+    response = client.get("/Observation/_references/_keys")
     response_content_json =json.loads(response.content)
 
     assert isinstance(resource.reference_keys, List)
     assert isinstance(response_content_json, List)
     assert(resource.reference_keys == response_content_json)
 
+def test_acronyms():
+    response = client.get("/Observation/_references/_acronyms")
+    response_content_json =json.loads(response.content)
+
+    assert response.status_code == 200
+    assert isinstance(resource.acronyms, dict)
+    assert isinstance(response_content_json, dict)
+    assert(resource.acronyms == response_content_json)
+
+def test_acronym_by_key():
+    acronym_response = client.get("/Observation/_references/_acronyms/HDL")
+    acronym_response_content_json = json.loads(acronym_response.content)
+    assert acronym_response.status_code == 200
+
+    reference_response = client.get(f"/Observation/_references/{resource.acronyms['HDL']}")
+    reference_response_content_json = json.loads(reference_response.content)
+    assert reference_response.status_code == 200
+
+    assert isinstance(resource.acronyms['HDL'], str)
+    assert isinstance(Reference(**acronym_response_content_json), Reference)
+    assert isinstance(Reference(**reference_response_content_json), Reference)
+    assert(acronym_response_content_json == reference_response_content_json)
+
 def test_reference():
-    response = client.get("/References/glucose")
+    response = client.get("/Observation/_references/glucose")
     response_content_json = json.loads(response.content)
 
     assert response.status_code == 200
@@ -42,7 +65,7 @@ def test_reference():
     assert(is_subset(resource.references['glucose'], response_content_json))
 
 def test_reference_range():
-    response = client.get("/References/glucose/referenceRange")
+    response = client.get("/Observation/_references/glucose/_referenceRange")
     response_content_json = json.loads(response.content)
 
     assert response.status_code == 200
@@ -51,7 +74,7 @@ def test_reference_range():
     assert(is_subset(resource.references['glucose']['referenceRange'], response_content_json))
 
 def test_reference_code():
-    response = client.get("/References/glucose/code")
+    response = client.get("/Observation/_references/glucose/_code")
     response_content_json = json.loads(response.content)
 
     assert response.status_code == 200
@@ -61,7 +84,7 @@ def test_reference_code():
     assert(is_subset(resource.references['glucose']['code'], response_content_json))
 
 def test_bundles():
-    response = client.get("/Bundles")
+    response = client.get("/Bundles/_references")
     response_content_json = json.loads(response.content)
 
     assert response.status_code == 200
@@ -75,36 +98,13 @@ def test_bundles():
         assert isinstance(Bundle(**value), Bundle)
 
 def test_bundle_keys():
-    response = client.get("/Bundles/keys")
+    response = client.get("/Bundles/_keys")
     response_content_json =json.loads(response.content)
 
     assert response.status_code == 200
     assert isinstance(resource.bundle_keys, List)
     assert isinstance(response_content_json, List)
     assert(resource.bundle_keys == response_content_json)
-
-def test_acronyms():
-    response = client.get("/Acronyms")
-    response_content_json =json.loads(response.content)
-
-    assert response.status_code == 200
-    assert isinstance(resource.acronyms, dict)
-    assert isinstance(response_content_json, dict)
-    assert(resource.acronyms == response_content_json)
-
-def test_acronym_by_key():
-    acronym_response = client.get("/Acronyms/HDL")
-    acronym_response_content_json = json.loads(acronym_response.content)
-    assert acronym_response.status_code == 200
-
-    reference_response = client.get(f"/References/{resource.acronyms['HDL']}")
-    reference_response_content_json = json.loads(reference_response.content)
-    assert reference_response.status_code == 200
-
-    assert isinstance(resource.acronyms['HDL'], str)
-    assert isinstance(Reference(**acronym_response_content_json), Reference)
-    assert isinstance(Reference(**reference_response_content_json), Reference)
-    assert(acronym_response_content_json == reference_response_content_json)
 
 def is_subset(subset, superset):
     match subset:
