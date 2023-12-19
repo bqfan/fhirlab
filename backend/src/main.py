@@ -1,3 +1,4 @@
+from heapq import merge
 from fastapi import FastAPI, status, HTTPException, Depends
 from typing import Final, List
 from fastapi.responses import RedirectResponse
@@ -50,7 +51,7 @@ for key in resource.acronyms:
 
 AcronymKeys = TempEnum("BundleKeys", acronym_keys)
 
-@app.post("/Observation/_references/{key}")
+@app.post("/Observation/_references/{key}", status_code=status.HTTP_201_CREATED)
 async def evaluate_reference(key: ReferenceKeys, observation_payload: ObservationPayload):
     reference = get_reference_by_key(key)
     reference_range = get_reference_range_by_key(key)[0]
@@ -91,7 +92,7 @@ async def evaluate_reference(key: ReferenceKeys, observation_payload: Observatio
         code = "N"
         display = "Normal"
 
-    id = key
+    id = dict(observation_payload)["id"]
     identifier = dict(observation_payload)["identifier"]
     status = dict(observation_payload)["status"]
     subject = dict(observation_payload)["subject"]["reference"]
@@ -112,25 +113,24 @@ async def evaluate_reference(key: ReferenceKeys, observation_payload: Observatio
         }]
     }]
 
-    reference["id"] = id
-    reference["text"] = text
-    reference["interpretation"] = interpretation
+    response = dict(observation_payload) | reference
+    response["text"] = text
+    response["interpretation"] = interpretation
+    return response
 
-    return reference
-
-@app.get("/Observation/_references")
+@app.get("/Observation/_references", status_code=status.HTTP_200_OK)
 def get_references() -> dict:
     return resource.references
 
-@app.get("/Observation/_references/_keys")
+@app.get("/Observation/_references/_keys", status_code=status.HTTP_200_OK)
 def get_reference_keys() -> list:
     return resource.reference_keys
 
-@app.get("/Observation/_references/_acronyms")
+@app.get("/Observation/_references/_acronyms", status_code=status.HTTP_200_OK)
 def get_acronyms() -> dict:
     return resource.acronyms
 
-@app.get("/Observation/_references/_acronyms/{key}")
+@app.get("/Observation/_references/_acronyms/{key}", status_code=status.HTTP_200_OK)
 def get_reference_by_acronym(key: AcronymKeys):
     try:
         acronym_value = resource.acronyms[key]
@@ -140,7 +140,7 @@ def get_reference_by_acronym(key: AcronymKeys):
 
     return get_reference_by_key(acronym_value)
 
-@app.get("/Observation/_references/{key}", response_model=Reference, response_model_exclude_unset=True)
+@app.get("/Observation/_references/{key}", status_code=status.HTTP_200_OK, response_model=Reference, response_model_exclude_unset=True)
 def get_reference_by_key(key: ReferenceKeys):
     try:
         reference = resource.references[key]
@@ -150,7 +150,7 @@ def get_reference_by_key(key: ReferenceKeys):
 
     return reference
 
-@app.get("/Observation/_references/{key}/_referenceRange", response_model=list[ReferenceRangeItem], response_model_exclude_unset=True)
+@app.get("/Observation/_references/{key}/_referenceRange", status_code=status.HTTP_200_OK, response_model=list[ReferenceRangeItem], response_model_exclude_unset=True)
 def get_reference_range_by_key(key: ReferenceKeys):
     try:
         referenceRange = resource.references[key]["referenceRange"]
@@ -160,7 +160,7 @@ def get_reference_range_by_key(key: ReferenceKeys):
 
     return referenceRange
 
-@app.get("/Observation/_references/{key}/_code")
+@app.get("/Observation/_references/{key}/_code", status_code=status.HTTP_200_OK)
 def get_reference_code_by_key(key: ReferenceKeys) -> Code:
     try:
         referenceCode = resource.references[key]["code"]
@@ -170,7 +170,7 @@ def get_reference_code_by_key(key: ReferenceKeys) -> Code:
 
     return referenceCode
 
-@app.get("/Bundles/_references")
+@app.get("/Bundles/_references", status_code=status.HTTP_200_OK)
 def get_bundles() -> dict:
     __bundle_formatter()
 
@@ -180,7 +180,7 @@ def get_bundles() -> dict:
 def get_bundle_keys() -> list:
     return resource.bundle_keys
 
-@app.get("/Bundles/{key}/_references", response_model=Bundle, response_model_exclude_unset=True)
+@app.get("/Bundles/{key}/_references", status_code=status.HTTP_200_OK, response_model=Bundle, response_model_exclude_unset=True)
 def get_bundle_by_key(key: BundleKeys):
     try:
         __bundle_formatter()

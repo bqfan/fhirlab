@@ -56,6 +56,7 @@ class ValueQuantity(BaseModel):
     }
 
 class ObservationPayload(BaseModel):
+    resourceType: str
     id: str
     identifier: list
     status: str="final"
@@ -97,6 +98,7 @@ class ObservationPayload(BaseModel):
 class Bundle(BaseModel):
     resourceType: str
     entry: list
+
 class Acronyms(str, Enum):
     true = True
     false = False
