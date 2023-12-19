@@ -169,6 +169,7 @@ def get_bundle_keys() -> list:
 @app.get("/Bundles/{key}", response_model=Bundle, response_model_exclude_unset=True)
 def get_bundle_by_key(key: BundleKeys):
     try:
+        __bundle_formatter()
         bundle = resource.bundles[key]
     except KeyError:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
