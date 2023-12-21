@@ -11,34 +11,39 @@ resource = Resource().load()
 client = TestClient(app)
 
 def test_references_post():
-    data = {
-        "resourceType": "Observation",
-        "effectiveDateTime": "2023-12-17T09:30:10+01:00",
-        "id": "123456789",
-        "identifier": [
-            {
-            "system": "https:/helthq.dev/identifiers/observations",
-            "use": "official",
-            "value": "1234"
+    data =  {
+                "resourceType": "Observation",
+                "id": "8892395",
+                "meta": {
+                    "versionId": "1",
+                    "lastUpdated": "2023-03-28T11:47:32.696+00:00",
+                    "source": "#kfVW4VF0cQM8qBJe"
+                },
+                "status": "final",
+                "code": {
+                    "coding": [
+                    {
+                        "code": "15074-8",
+                        "display": "Glucose [Moles/volume] in Blood",
+                        "system": "http://loinc.org"
+                    }
+                    ],
+                    "text": "Glucose"
+                },
+                "subject": {
+                    "reference": "Patient/7304958"
+                },
+                "effectivePeriod": {
+                    "start": "2023-12-22T20:11:00.000+00:00",
+                    "end": "2023-12-22T20:11:00.000+00:00"
+                },
+                "valueQuantity": {
+                    "value": 6.3,
+                    "unit": "mmol/l",
+                    "system": "http://unitsofmeasure.org",
+                    "code": "mmol/L"
+                }
             }
-        ],
-        "issued": "2023-12-17T15:30:10+01:00",
-        "performer": [
-            {
-            "reference": "Practitioner/example"
-            }
-        ],
-        "status": "final",
-        "subject": {
-            "reference": "Patient/example"
-        },
-        "valueQuantity": {
-            "code": "mmol/L",
-            "system": "http://unitsofmeasure.org",
-            "unit": "mmol/l",
-            "value": 6.3
-        }
-    }
 
     post_response = client.post(
         "/Observation/_references/glucose",

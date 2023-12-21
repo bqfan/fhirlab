@@ -56,36 +56,44 @@ class ValueQuantity(BaseModel):
     }
 
 class ObservationPayload(BaseModel):
-    resourceType: str
+    resourceType: str="Observation"
     id: str
-    identifier: list
+    meta: dict
     status: str="final"
+    code: Code
     subject: dict
-    effectiveDateTime: str
-    issued: str
-    performer: list
+    effectivePeriod: dict
     valueQuantity: ValueQuantity
     model_config = {
         "json_schema_extra": {
             "examples": [
                 {
-                    "id": "123456789",
-                    "identifier" : [{
-                        "use" : "official",
-                        "system" : "https:/helthq.dev/identifiers/observations",
-                        "value" : "1234"
-                    }],
-                    "subject" : {
-                        "reference" : "Patient/example"
+                    "resourceType": "Observation",
+                    "id": "8892395",
+                    "meta": {
+                        "versionId": "1",
+                        "lastUpdated": "2023-03-28T11:47:32.696+00:00",
+                        "source": "#kfVW4VF0cQM8qBJe"
                     },
-                    "effectiveDateTime" : "2023-12-17T09:30:10+01:00",
-                    "issued" : "2023-12-17T15:30:10+01:00",
-                    "performer" : [{
-                        "reference" : "Practitioner/example",
-                    }],
                     "status": "final",
-                    "valueQuantity":
-                    {
+                    "code": {
+                        "coding": [
+                        {
+                            "code": "15074-8",
+                            "display": "Glucose [Moles/volume] in Blood",
+                            "system": "http://loinc.org"
+                        }
+                        ],
+                        "text": "Glucose"
+                    },
+                    "subject": {
+                        "reference": "Patient/7304958"
+                    },
+                    "effectivePeriod": {
+                        "start": "2023-12-22T20:11:00.000+00:00",
+                        "end": "2023-12-22T20:11:00.000+00:00"
+                    },
+                    "valueQuantity": {
                         "value": 6.3,
                         "unit": "mmol/l",
                         "system": "http://unitsofmeasure.org",
@@ -95,6 +103,7 @@ class ObservationPayload(BaseModel):
             ]
         }
     }
+
 class Bundle(BaseModel):
     resourceType: str
     entry: list

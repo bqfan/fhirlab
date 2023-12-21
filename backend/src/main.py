@@ -14,7 +14,44 @@ from backend.src.api.models.schemas.references import CodingItem, Code, High, Lo
 
 # models.Base.metadata.create_all(bind=engine)
 
-app = FastAPI()
+description = """
+labtest-api uses customized FHIR resource paths to fetch lab test references and evaluate labvalues and return FHIR compatible resources. 🚀
+
+## References
+
+You can **get observation references, acronyms, reference code and ranges**.
+You can **evaluate lab values (observations) against reference ranges**.
+
+## Bundlers
+
+You can **get bundles references, acronyms**.
+You can **evaluate bundles of observations against reference ranges** (_not implemented_).
+"""
+tags_metadata = [
+    {"name": "References",
+     "description": "Reference values (intervals) for blood, urine, cerebrospinal fluid (CSF), stool, and other fluids (eg, gastric acid). In FHIR, observation resources can be used to describe observations which may need to be evaluated in order to determine whether a specific medicine can be administered or held (e.g., weight, lab value result) and provide guidance on the dose to be administered (e.g., sliding scale insulin dose)." },
+    {"name": "Bundles",
+     "description": "In FHIR bundles is referred to as \"bundling\" the resources together."
+     }
+]
+
+app = FastAPI(
+    title="labtest-api",
+    description=description,
+    summary="Healthq Opensource.",
+    version="0.0.1",
+    terms_of_service="http://example.com/terms/",
+    contact={
+        "name": "bqfan",
+        "url": "https://healthq.dev",
+        "email": "bqfan@healthq.dev",
+    },
+    license_info={
+        "name": "Apache 2.0",
+        "url": "https://www.apache.org/licenses/LICENSE-2.0.html",
+    },    
+    openapi_tags=tags_metadata
+)
 
 origins = ["*"]
 
@@ -51,9 +88,62 @@ for key in resource.acronyms:
 
 AcronymKeys = TempEnum("BundleKeys", acronym_keys)
 
-@app.post("/Observation/_references/{key}", status_code=status.HTTP_201_CREATED)
+@app.get("/Observation/_references", status_code=status.HTTP_200_OK, tags=["References"])
+def get_references() -> dict:
+    return resource.references
+
+@app.get("/Observation/_references/_keys", status_code=status.HTTP_200_OK, tags=["References"])
+def get_reference_keys() -> list:
+    return resource.reference_keys
+
+@app.get("/Observation/_references/_acronyms", status_code=status.HTTP_200_OK, tags=["References"])
+def get_acronyms() -> dict:
+    return resource.acronyms
+
+@app.get("/Observation/_references/_acronyms/{key}", status_code=status.HTTP_200_OK, tags=["References"])
+def get_reference_by_acronym(key: AcronymKeys):
+    try:
+        acronym_value = resource.acronyms[key]
+    except KeyError:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"acronym key {key} not found")
+
+    return get_reference_by_key(acronym_value)
+
+@app.get("/Observation/_references/{key}", status_code=status.HTTP_200_OK, response_model=Reference, response_model_exclude_unset=True, tags=["References"])
+def get_reference_by_key(key: ReferenceKeys):
+    try:
+        reference = resource.references[key]
+    except KeyError:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"reference key {key} not found")
+
+    return reference
+
+@app.get("/Observation/_references/{key}/_referenceRange", status_code=status.HTTP_200_OK, response_model=list[ReferenceRangeItem], response_model_exclude_unset=True, tags=["References"])
+def get_reference_range_by_key(key: ReferenceKeys):
+    try:
+        referenceRange = resource.references[key]["referenceRange"]
+    except KeyError:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"referenceRange with key {key} not found")
+
+    return referenceRange
+
+@app.get("/Observation/_references/{key}/_code", status_code=status.HTTP_200_OK, tags=["References"])
+def get_reference_code_by_key(key: ReferenceKeys) -> Code:
+    try:
+        referenceCode = resource.references[key]["code"]
+    except KeyError:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"reference code with key {key} not found")
+
+    return referenceCode
+
+@app.post("/Observation/_references/{key}", status_code=status.HTTP_201_CREATED, tags=["References"])
 async def evaluate_reference(key: ReferenceKeys, observation_payload: ObservationPayload):
     reference = get_reference_by_key(key)
+
     reference_range = get_reference_range_by_key(key)[0]
     resource_type = reference["resourceType"]
     display = reference["code"]["coding"][0]["display"]
@@ -93,16 +183,21 @@ async def evaluate_reference(key: ReferenceKeys, observation_payload: Observatio
         display = "Normal"
 
     id = dict(observation_payload)["id"]
-    identifier = dict(observation_payload)["identifier"]
+    #identifier = dict(observation_payload)["identifier"]
     status = dict(observation_payload)["status"]
     subject = dict(observation_payload)["subject"]["reference"]
-    effectiveDateTime = dict(observation_payload)["effectiveDateTime"]
-    issued = dict(observation_payload)["issued"]
-    practitioner = dict(observation_payload)["performer"][0]["reference"]
+    effectivePeriodStart = dict(observation_payload)["effectivePeriod"]["start"]
+    effectivePeriodStart = dict(observation_payload)["effectivePeriod"]["end"]
+    #issued = dict(observation_payload)["issued"]
+    #practitioner = dict(observation_payload)["performer"][0]["reference"]
 
+    # text = {
+    #     "status" : "generated",
+    #     "div" : f"<div xmlns=\"http://www.w3.org/1999/xhtml\"><p><b>Generated Narrative: {resource_type}</b><a name=\"{id}\"> </a></p><div style=\"display: inline-block; background-color: #d9e0e7; padding: 6px; margin: 4px; border: 1px solid #8da1b4; border-radius: 5px; line-height: 60%\"><p style=\"margin-bottom: 0px\">Resource {resource_type} &quot;{id}&quot; </p></div><p><b>{identifier}</b>: id:\u00a06323\u00a0(use:\u00a0OFFICIAL)</p><p><b>status</b>: {status}</p><p><b>code</b>: {display} <span style=\"background: LightGoldenRodYellow; margin: 4px; border: 1px solid khaki\"> (<a href=\"https://loinc.org/\">LOINC</a>#15074-8)</span></p><p><b>subject</b>: <a href=\"patient-example-f001-pieter.html\">{subject}</a></p><p><b>effective</b>: {effectiveDateTime}</p><p><b>issued</b>: {issued}</p><p><b>performer</b>: <a href=\"practitioner-example-f005-al.html\">{practitioner}</a></p><p><b>value</b>: {value} {value_unit}<span style=\"background: LightGoldenRodYellow\"> (Details: UCUM code {value_code} = '{value_code} ')</span></p><p><b>interpretation</b>: High <span style=\"background: LightGoldenRodYellow; margin: 4px; border: 1px solid khaki\"> (<a href=\"http://terminology.hl7.org/5.4.0/CodeSystem-v3-ObservationInterpretation.html\">ObservationInterpretation</a>#H)</span></p><h3>ReferenceRanges</h3><table class=\"grid\"><tr><td style=\"display: none\">-</td><td><b>Low</b></td><td><b>High</b></td></tr><tr><td style=\"display: none\">*</td><td>{low} {low_unit}<span style=\"background: LightGoldenRodYellow\"> (Details: UCUM code {low_code} = '{low_code}')</span></td><td>{high} {high_unit}<span style=\"background: LightGoldenRodYellow\"> (Details: UCUM code {high_code} = '{high_code}')</span></td></tr></table></div>"
+    # }
     text = {
         "status" : "generated",
-        "div" : f"<div xmlns=\"http://www.w3.org/1999/xhtml\"><p><b>Generated Narrative: {resource_type}</b><a name=\"{id}\"> </a></p><div style=\"display: inline-block; background-color: #d9e0e7; padding: 6px; margin: 4px; border: 1px solid #8da1b4; border-radius: 5px; line-height: 60%\"><p style=\"margin-bottom: 0px\">Resource {resource_type} &quot;{id}&quot; </p></div><p><b>{identifier}</b>: id:\u00a06323\u00a0(use:\u00a0OFFICIAL)</p><p><b>status</b>: {status}</p><p><b>code</b>: {display} <span style=\"background: LightGoldenRodYellow; margin: 4px; border: 1px solid khaki\"> (<a href=\"https://loinc.org/\">LOINC</a>#15074-8)</span></p><p><b>subject</b>: <a href=\"patient-example-f001-pieter.html\">{subject}</a></p><p><b>effective</b>: {effectiveDateTime}</p><p><b>issued</b>: {issued}</p><p><b>performer</b>: <a href=\"practitioner-example-f005-al.html\">{practitioner}</a></p><p><b>value</b>: {value} {value_unit}<span style=\"background: LightGoldenRodYellow\"> (Details: UCUM code {value_code} = '{value_code} ')</span></p><p><b>interpretation</b>: High <span style=\"background: LightGoldenRodYellow; margin: 4px; border: 1px solid khaki\"> (<a href=\"http://terminology.hl7.org/5.4.0/CodeSystem-v3-ObservationInterpretation.html\">ObservationInterpretation</a>#H)</span></p><h3>ReferenceRanges</h3><table class=\"grid\"><tr><td style=\"display: none\">-</td><td><b>Low</b></td><td><b>High</b></td></tr><tr><td style=\"display: none\">*</td><td>{low} {low_unit}<span style=\"background: LightGoldenRodYellow\"> (Details: UCUM code {low_code} = '{low_code}')</span></td><td>{high} {high_unit}<span style=\"background: LightGoldenRodYellow\"> (Details: UCUM code {high_code} = '{high_code}')</span></td></tr></table></div>"
+        "div" : f"<div xmlns=\"http://www.w3.org/1999/xhtml\"><p><b>Generated Narrative: {resource_type}</b><a name=\"{id}\"> </a></p><div style=\"display: inline-block; background-color: #d9e0e7; padding: 6px; margin: 4px; border: 1px solid #8da1b4; border-radius: 5px; line-height: 60%\"><p style=\"margin-bottom: 0px\">Resource {resource_type} &quot;{id}&quot; </p></div><p>: id:\u00a06323\u00a0(use:\u00a0OFFICIAL)</p><p><b>status</b>: {status}</p><p><b>code</b>: {display} <span style=\"background: LightGoldenRodYellow; margin: 4px; border: 1px solid khaki\"> (<a href=\"https://loinc.org/\">LOINC</a>#15074-8)</span></p><p><b>subject</b>: <a href=\"patient-example-f001-pieter.html\">{subject}</a></p><p><b>value</b>: {value} {value_unit}<span style=\"background: LightGoldenRodYellow\"> (Details: UCUM code {value_code} = '{value_code} ')</span></p><p><b>interpretation</b>: High <span style=\"background: LightGoldenRodYellow; margin: 4px; border: 1px solid khaki\"> (<a href=\"http://terminology.hl7.org/5.4.0/CodeSystem-v3-ObservationInterpretation.html\">ObservationInterpretation</a>#H)</span></p><h3>ReferenceRanges</h3><table class=\"grid\"><tr><td style=\"display: none\">-</td><td><b>Low</b></td><td><b>High</b></td></tr><tr><td style=\"display: none\">*</td><td>{low} {low_unit}<span style=\"background: LightGoldenRodYellow\"> (Details: UCUM code {low_code} = '{low_code}')</span></td><td>{high} {high_unit}<span style=\"background: LightGoldenRodYellow\"> (Details: UCUM code {high_code} = '{high_code}')</span></td></tr></table></div>"
     }
 
     interpretation = [{
@@ -118,69 +213,17 @@ async def evaluate_reference(key: ReferenceKeys, observation_payload: Observatio
     response["interpretation"] = interpretation
     return response
 
-@app.get("/Observation/_references", status_code=status.HTTP_200_OK)
-def get_references() -> dict:
-    return resource.references
-
-@app.get("/Observation/_references/_keys", status_code=status.HTTP_200_OK)
-def get_reference_keys() -> list:
-    return resource.reference_keys
-
-@app.get("/Observation/_references/_acronyms", status_code=status.HTTP_200_OK)
-def get_acronyms() -> dict:
-    return resource.acronyms
-
-@app.get("/Observation/_references/_acronyms/{key}", status_code=status.HTTP_200_OK)
-def get_reference_by_acronym(key: AcronymKeys):
-    try:
-        acronym_value = resource.acronyms[key]
-    except KeyError:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=f"acronym key {key} not found")
-
-    return get_reference_by_key(acronym_value)
-
-@app.get("/Observation/_references/{key}", status_code=status.HTTP_200_OK, response_model=Reference, response_model_exclude_unset=True)
-def get_reference_by_key(key: ReferenceKeys):
-    try:
-        reference = resource.references[key]
-    except KeyError:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=f"reference key {key} not found")
-
-    return reference
-
-@app.get("/Observation/_references/{key}/_referenceRange", status_code=status.HTTP_200_OK, response_model=list[ReferenceRangeItem], response_model_exclude_unset=True)
-def get_reference_range_by_key(key: ReferenceKeys):
-    try:
-        referenceRange = resource.references[key]["referenceRange"]
-    except KeyError:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=f"referenceRange with key {key} not found")
-
-    return referenceRange
-
-@app.get("/Observation/_references/{key}/_code", status_code=status.HTTP_200_OK)
-def get_reference_code_by_key(key: ReferenceKeys) -> Code:
-    try:
-        referenceCode = resource.references[key]["code"]
-    except KeyError:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=f"reference code with key {key} not found")
-
-    return referenceCode
-
-@app.get("/Bundles/_references", status_code=status.HTTP_200_OK)
+@app.get("/Bundles/_references", status_code=status.HTTP_200_OK, tags=["Bundles"])
 def get_bundles() -> dict:
     __bundle_formatter()
 
     return resource.bundles
 
-@app.get("/Bundles/_keys")
+@app.get("/Bundles/_keys", tags=["Bundles"])
 def get_bundle_keys() -> list:
     return resource.bundle_keys
 
-@app.get("/Bundles/{key}/_references", status_code=status.HTTP_200_OK, response_model=Bundle, response_model_exclude_unset=True)
+@app.get("/Bundles/{key}/_references", status_code=status.HTTP_200_OK, response_model=Bundle, response_model_exclude_unset=True, tags=["Bundles"])
 def get_bundle_by_key(key: BundleKeys):
     try:
         __bundle_formatter()
