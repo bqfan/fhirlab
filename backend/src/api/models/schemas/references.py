@@ -9,7 +9,7 @@ class CodingItem(BaseModel):
     system: str
 
 class Code(BaseModel):
-    coding: List[CodingItem]
+    coding: list[CodingItem]
     text: str
 
 class High(BaseModel):
@@ -27,19 +27,87 @@ class Low(BaseModel):
 class ReferenceRangeItem(BaseModel):
     low: Optional[Low] = None
     high: Optional[High] = None
-    normalValue: Optional[List[str]] = None
-    type: Optional[List[str]] = None
-    appliesTo: Optional[List[List[str]]] = None
+    normalValue: Optional[list[str]] = None
+    type: Optional[list[str]] = None
+    appliesTo: Optional[list[list[str]]] = None
     age: Optional[list[int]] = Field(None, json_schema_extra={ "ge":0, "le":150, "min_length":2, "max_length":2, "description":"age", "example":[50, 70] })
 
 class Reference(BaseModel):
     resourceType: str
     code: Code
-    referenceRange: List[ReferenceRangeItem]
+    referenceRange: list[ReferenceRangeItem]
+
+class ValueQuantity(BaseModel):
+    value: float
+    unit: str
+    system: str
+    code: str
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "value": 6.3,
+                    "unit": "mmol/l",
+                    "system": "http://unitsofmeasure.org",
+                    "code": "mmol/L",
+                }
+            ]
+        }
+    }
+
+class ObservationPayload(BaseModel):
+    resourceType: str="Observation"
+    id: str
+    meta: dict
+    status: str="final"
+    code: Code
+    subject: dict
+    effectivePeriod: dict
+    valueQuantity: ValueQuantity
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "resourceType": "Observation",
+                    "id": "8892395",
+                    "meta": {
+                        "versionId": "1",
+                        "lastUpdated": "2023-03-28T11:47:32.696+00:00",
+                        "source": "#kfVW4VF0cQM8qBJe"
+                    },
+                    "status": "final",
+                    "code": {
+                        "coding": [
+                        {
+                            "code": "15074-8",
+                            "display": "Glucose [Moles/volume] in Blood",
+                            "system": "http://loinc.org"
+                        }
+                        ],
+                        "text": "Glucose"
+                    },
+                    "subject": {
+                        "reference": "Patient/7304958"
+                    },
+                    "effectivePeriod": {
+                        "start": "2023-12-22T20:11:00.000+00:00",
+                        "end": "2023-12-22T20:11:00.000+00:00"
+                    },
+                    "valueQuantity": {
+                        "value": 6.3,
+                        "unit": "mmol/l",
+                        "system": "http://unitsofmeasure.org",
+                        "code": "mmol/L"
+                    }
+                }
+            ]
+        }
+    }
 
 class Bundle(BaseModel):
     resourceType: str
     entry: list
+
 class Acronyms(str, Enum):
     true = True
     false = False
