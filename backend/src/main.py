@@ -11,7 +11,7 @@ from backend.src.api.models.schemas.references import CodingItem, Code, High, Lo
 # from .database import engine
 # from .routers import post, user, auth, vote
 # from .config import settings
-
+from fhir.resources.observation import Observation
 
 # models.Base.metadata.create_all(bind=engine)
 
@@ -115,6 +115,10 @@ def get_reference_by_acronym(key: AcronymKeys):
 def get_reference_by_key(key: ReferenceKeys):
     try:
         reference = resource.references[key]
+        print(Observation.parse_file("backend/src/glucose1.yaml"))
+        # print(type(Observation.parse_obj(reference)))
+        # print((Observation.parse_obj(reference)).json(indent=True))
+        #print(reference)
     except KeyError:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"reference key {key} not found")

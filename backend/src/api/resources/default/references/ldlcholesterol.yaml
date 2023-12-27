@@ -12,4 +12,3 @@ ldlcholesterol: &ldlcholesterol
         code: mmol/L
         unit: mmol/L
         value: 3
-

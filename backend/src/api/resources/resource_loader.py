@@ -29,8 +29,14 @@ class Resource:
             glob.glob(f"backend/src/api/resources/{organization}/bundles/*.yaml")
 
         resource_yaml_files = self.__concat_yaml_files(resource_files)
+        #print(resource_yaml_files)
+        yaml_obj = yaml.safe_load(resource_yaml_files)
+        
+        for k, v in yaml.safe_load(resource_yaml_files).items():
+            print(k)
+            print(v)
         resources_dict = yaml.load(resource_yaml_files, Loader=SafeLoader)
-
+        #print(resources_dict.keys())
         return resources_dict
 
     def __get_references(self):

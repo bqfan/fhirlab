@@ -1,0 +1,72 @@
+resourceType: Bundle
+id: lipids
+type: collection
+entry:
+- fullUrl: https://example.com/base/Observation/cholesterol
+  resource:
+    resourceType: Observation
+    id: cholesterol
+    status: final
+    code:
+      coding:
+      - system: http://loinc.org
+        code: 35200-5
+        display: Cholesterol [Moles/​volume] in Serum or Plasma
+      text: Cholesterol
+    referenceRange:
+    - high:
+        value: 4.5
+        unit: mmol/L
+        system: http://unitsofmeasure.org
+        code: mmol/L
+- fullUrl: https://example.com/base/Observation/triglyceride
+  resource:
+    resourceType: Observation
+    id: triglyceride
+    status: final
+    code:
+      coding:
+      - system: http://loinc.org
+        code: 35217-9
+        display: Triglyceride [Moles/​volume] in Serum or Plasma
+      text: Triglyceride
+    referenceRange:
+    - high:
+        value: 2
+        unit: mmol/L
+        system: http://unitsofmeasure.org
+        code: mmol/L
+- fullUrl: https://example.com/base/Observation/hdlcholesterol
+  resource:
+    resourceType: Observation
+    id: hdlcholesterol
+    status: final
+    code:
+      coding:
+      - system: http://loinc.org
+        code: 2085-9
+        display: HDL Cholesterol
+      text: Cholesterol in HDL
+    referenceRange:
+    - low:
+        value: 1.5
+        unit: mmol/L
+        system: http://unitsofmeasure.org
+        code: mmol/L
+- fullUrl: https://example.com/base/Observation/ldlcholesterol
+  resource:
+    resourceType: Observation
+    id: ldlcholesterol
+    status: final
+    code:
+      coding:
+      - system: http://loinc.org
+        code: 13457-7
+        display: Cholesterol in LDL [Mass/volume] in Serum or Plasma by calculation
+      text: LDL Chol. (Calc)
+    referenceRange:
+    - high:
+        value: 3
+        unit: mmol/L
+        system: http://unitsofmeasure.org
+        code: mmol/L
