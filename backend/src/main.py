@@ -182,6 +182,7 @@ async def evaluate_reference(key: ReferenceKeys, observation_payload:
                                                 }
                                             ]
                                        )]):
+async def evaluate_reference(key: ReferenceKeys, observation_payload: dict):
     reference = get_reference_by_key(key)
     observation = get_json(observation_payload)
     
