@@ -8,6 +8,7 @@ from backend.src.api.resources.resource_loader import Resource
 from fastapi.middleware.cors import CORSMiddleware
 from backend.src.api.models.schemas.references import CodingItem, Code, High, Low, Reference, ReferenceRangeItem, ObservationPayload, Bundle, Acronyms, TempEnum
 from fhir.resources.observation import Observation
+from starlette.status import HTTP_404_NOT_FOUND, HTTP_200_OK, HTTP_422_UNPROCESSABLE_ENTITY
 # from . import models
 # from .database import engine
 # from .routers import post, user, auth, vote
@@ -184,8 +185,7 @@ async def evaluate_reference(key: ReferenceKeys, observation:
                                        )]):
 
     reference = get_reference_by_key(key)
-    
-    global status
+
     try:
         Observation.validate(observation)
     except Exception as e:
@@ -197,6 +197,7 @@ async def evaluate_reference(key: ReferenceKeys, observation:
             detail=f"Request code is not semantic interoperable.")
 
     if not __check_unit(observation, reference):
+        #return f"Request unit is not semantic interoperable."
         raise HTTPException(status_code=status.HTTP_412_PRECONDITION_FAILED,
             detail=f"Request unit is not semantic interoperable.")
     
@@ -240,7 +241,7 @@ async def evaluate_reference(key: ReferenceKeys, observation:
 
     id = observation["id"]
     #identifier = dict(observation_payload)["identifier"]
-    status = observation["status"]
+    observation_status = observation["status"]
     subject = observation["subject"]["reference"]
     effectivePeriodStart = observation["effectivePeriod"]["start"]
     effectivePeriodend = observation["effectivePeriod"]["end"]
@@ -253,7 +254,7 @@ async def evaluate_reference(key: ReferenceKeys, observation:
     # }
     text = {
         "status" : "generated",
-        "div" : f"<div xmlns=\"http://www.w3.org/1999/xhtml\"><p><b>Generated Narrative: {resource_type}</b><a name=\"{id}\"> </a></p><div style=\"display: inline-block; background-color: #d9e0e7; padding: 6px; margin: 4px; border: 1px solid #8da1b4; border-radius: 5px; line-height: 60%\"><p style=\"margin-bottom: 0px\">Resource {resource_type} &quot;{id}&quot; </p></div><p>: id:\u00a06323\u00a0(use:\u00a0OFFICIAL)</p><p><b>status</b>: {status}</p><p><b>code</b>: {display} <span style=\"background: LightGoldenRodYellow; margin: 4px; border: 1px solid khaki\"> (<a href=\"https://loinc.org/\">LOINC</a>#15074-8)</span></p><p><b>subject</b>: <a href=\"patient-example-f001-pieter.html\">{subject}</a></p><p><b>value</b>: {value} {value_unit}<span style=\"background: LightGoldenRodYellow\"> (Details: UCUM code {value_code} = '{value_code} ')</span></p><p><b>interpretation</b>: High <span style=\"background: LightGoldenRodYellow; margin: 4px; border: 1px solid khaki\"> (<a href=\"http://terminology.hl7.org/5.4.0/CodeSystem-v3-ObservationInterpretation.html\">ObservationInterpretation</a>#H)</span></p><h3>ReferenceRanges</h3><table class=\"grid\"><tr><td style=\"display: none\">-</td><td><b>Low</b></td><td><b>High</b></td></tr><tr><td style=\"display: none\">*</td><td>{low} {low_unit}<span style=\"background: LightGoldenRodYellow\"> (Details: UCUM code {low_code} = '{low_code}')</span></td><td>{high} {high_unit}<span style=\"background: LightGoldenRodYellow\"> (Details: UCUM code {high_code} = '{high_code}')</span></td></tr></table></div>"
+        "div" : f"<div xmlns=\"http://www.w3.org/1999/xhtml\"><p><b>Generated Narrative: {resource_type}</b><a name=\"{id}\"> </a></p><div style=\"display: inline-block; background-color: #d9e0e7; padding: 6px; margin: 4px; border: 1px solid #8da1b4; border-radius: 5px; line-height: 60%\"><p style=\"margin-bottom: 0px\">Resource {resource_type} &quot;{id}&quot; </p></div><p>: id:\u00a06323\u00a0(use:\u00a0OFFICIAL)</p><p><b>status</b>: {observation_status}</p><p><b>code</b>: {display} <span style=\"background: LightGoldenRodYellow; margin: 4px; border: 1px solid khaki\"> (<a href=\"https://loinc.org/\">LOINC</a>#15074-8)</span></p><p><b>subject</b>: <a href=\"patient-example-f001-pieter.html\">{subject}</a></p><p><b>value</b>: {value} {value_unit}<span style=\"background: LightGoldenRodYellow\"> (Details: UCUM code {value_code} = '{value_code} ')</span></p><p><b>interpretation</b>: High <span style=\"background: LightGoldenRodYellow; margin: 4px; border: 1px solid khaki\"> (<a href=\"http://terminology.hl7.org/5.4.0/CodeSystem-v3-ObservationInterpretation.html\">ObservationInterpretation</a>#H)</span></p><h3>ReferenceRanges</h3><table class=\"grid\"><tr><td style=\"display: none\">-</td><td><b>Low</b></td><td><b>High</b></td></tr><tr><td style=\"display: none\">*</td><td>{low} {low_unit}<span style=\"background: LightGoldenRodYellow\"> (Details: UCUM code {low_code} = '{low_code}')</span></td><td>{high} {high_unit}<span style=\"background: LightGoldenRodYellow\"> (Details: UCUM code {high_code} = '{high_code}')</span></td></tr></table></div>"
     }
 
     interpretation = [{
