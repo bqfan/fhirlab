@@ -182,13 +182,13 @@ async def evaluate_reference(key: ReferenceKeys, observation_payload:
                                                 }
                                             ]
                                        )]):
-async def evaluate_reference(key: ReferenceKeys, observation_payload: dict):
+
     reference = get_reference_by_key(key)
     observation = get_json(observation_payload)
     
     global status
     try:
-        Observation.parse_obj(observation)
+        Observation.parse_obj(observation_payload)
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"Request payload is invalid: {e}.")
