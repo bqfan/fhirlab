@@ -143,7 +143,7 @@ def get_reference_code_by_key(key: ReferenceKeys) -> Code:
     return referenceCode
 
 @app.post("/Observation/_references/{key}", status_code=status.HTTP_201_CREATED, tags=["References"])
-async def evaluate_reference(key: ReferenceKeys, observation_payload:
+async def evaluate_reference(key: ReferenceKeys, observation:
                              Annotated[dict,
                                        Body(
                                             examples=[
@@ -184,11 +184,10 @@ async def evaluate_reference(key: ReferenceKeys, observation_payload:
                                        )]):
 
     reference = get_reference_by_key(key)
-    observation = get_json(observation_payload)
     
     global status
     try:
-        Observation.parse_obj(observation_payload)
+        Observation.validate(observation)
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"Request payload is invalid: {e}.")
@@ -221,7 +220,7 @@ async def evaluate_reference(key: ReferenceKeys, observation_payload:
         low_code = "N/A"
         low_unit = "N/A"
 
-    value_quantity = dict(observation_payload['valueQuantity'])
+    value_quantity = observation['valueQuantity']
     value = value_quantity['value']
     value_code = value_quantity['code']
     value_unit = value_quantity['unit']
@@ -239,12 +238,12 @@ async def evaluate_reference(key: ReferenceKeys, observation_payload:
         code = "N"
         display = "Normal"
 
-    id = dict(observation_payload)["id"]
+    id = observation["id"]
     #identifier = dict(observation_payload)["identifier"]
-    status = dict(observation_payload)["status"]
-    subject = dict(observation_payload)["subject"]["reference"]
-    effectivePeriodStart = dict(observation_payload)["effectivePeriod"]["start"]
-    effectivePeriodStart = dict(observation_payload)["effectivePeriod"]["end"]
+    status = observation["status"]
+    subject = observation["subject"]["reference"]
+    effectivePeriodStart = observation["effectivePeriod"]["start"]
+    effectivePeriodend = observation["effectivePeriod"]["end"]
     #issued = dict(observation_payload)["issued"]
     #practitioner = dict(observation_payload)["performer"][0]["reference"]
 
@@ -265,7 +264,7 @@ async def evaluate_reference(key: ReferenceKeys, observation_payload:
         }]
     }]
 
-    response = dict(observation_payload) | reference
+    response = observation | reference
     response["text"] = text
     response["interpretation"] = interpretation
     return response
