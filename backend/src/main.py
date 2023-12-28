@@ -1,7 +1,7 @@
 from heapq import merge
 import json
-from fastapi import FastAPI, status, HTTPException, Depends
-from typing import Final, List
+from fastapi import Body, FastAPI, status, HTTPException, Depends
+from typing import Annotated, Final, List
 from fastapi.responses import RedirectResponse
 from backend.src.api.resources.resource_loader import Resource
 # from pydantic import BaseModel, create_model
@@ -143,17 +143,55 @@ def get_reference_code_by_key(key: ReferenceKeys) -> Code:
     return referenceCode
 
 @app.post("/Observation/_references/{key}", status_code=status.HTTP_201_CREATED, tags=["References"])
+async def evaluate_reference(key: ReferenceKeys, observation_payload:
+                             Annotated[dict,
+                                       Body(
+                                            examples=[
+                                                {
+                                                    "resourceType": "Observation",
+                                                    "id": "8892395",
+                                                    "meta": {
+                                                        "versionId": "1",
+                                                        "lastUpdated": "2023-03-28T11:47:32.696+00:00",
+                                                        "source": "#kfVW4VF0cQM8qBJe"
+                                                    },
+                                                    "status": "final",
+                                                    "code": {
+                                                        "coding": [
+                                                        {
+                                                            "code": "15074-8",
+                                                            "display": "Glucose [Moles/volume] in Blood",
+                                                            "system": "http://loinc.org"
+                                                        }
+                                                        ],
+                                                        "text": "Glucose"
+                                                    },
+                                                    "subject": {
+                                                        "reference": "Patient/7304958"
+                                                    },
+                                                    "effectivePeriod": {
+                                                        "start": "2023-12-22T20:11:00.000+00:00",
+                                                        "end": "2023-12-22T20:11:00.000+00:00"
+                                                    },
+                                                    "valueQuantity": {
+                                                        "value": 6.3,
+                                                        "unit": "mmol/l",
+                                                        "system": "http://unitsofmeasure.org",
+                                                        "code": "mmol/L"
+                                                    }
+                                                }
+                                            ]
+                                       )]):
 async def evaluate_reference(key: ReferenceKeys, observation_payload: dict):
     reference = get_reference_by_key(key)
     observation = get_json(observation_payload)
     
     global status
     try:
-        Observation(**observation_payload)
+        Observation.parse_obj(observation)
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"Request payload is invalid: {e}.")
-
 
     if not __check_semantic_interoperable(observation, reference):
         raise HTTPException(status_code=status.HTTP_412_PRECONDITION_FAILED,
