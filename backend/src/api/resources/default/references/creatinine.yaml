@@ -1,5 +1,6 @@
 creatinine:
   resourceType: Observation
+  status: unknown
   code:
     coding:
       - system: http://loinc.org

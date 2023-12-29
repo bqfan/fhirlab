@@ -1,5 +1,6 @@
 blood-urea-nitrogen: &blood-urea-nitrogen
   resourceType: Observation
+  status: unknown
   code:
     coding:
       - system: http://loinc.org

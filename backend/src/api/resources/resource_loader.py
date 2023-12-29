@@ -1,7 +1,10 @@
 import glob
+from fastapi import status, HTTPException
 import yaml, json
 from yaml import SafeLoader
 from backend.src.api.models.schemas.references import Reference
+from fhir.resources.observation import Observation
+from fhir.resources.bundle import Bundle
 
 class Resource:
     BaseUrl = "http://localhost:8080"
@@ -16,43 +19,53 @@ class Resource:
         self.acronyms = []
 
     def load(self) -> dict:
-        self.references = self.__get_references()
-        self.reference_keys = self.__get_reference_keys()
-        self.bundles = self.__get_bundles()
-        self.bundle_keys = self.__get_bundle_keys()
-        self.acronyms = self.__get_acronyms()
+        resources = self.__load_resources(self.organization)
+        self.references = self.__references(resources)
+        self.reference_keys = self.__reference_keys()
+        self.bundles = self.__bundles(resources)
+        self.bundle_keys = self.__bundle_keys()
+        self.acronyms = self.__acronyms()
 
         return self
 
-    def __get_resources(self, organization: str):
+    def __load_resources(self, organization: str):
         resource_files = glob.glob(f"backend/src/api/resources/{organization}/references/*.yaml") + \
             glob.glob(f"backend/src/api/resources/{organization}/bundles/*.yaml")
 
-        resource_yaml_files = self.__concat_yaml_files(resource_files)
-        resources_dict = yaml.load(resource_yaml_files, Loader=SafeLoader)
+        resources_yaml = self.__concat_yaml_files(resource_files)
+        resources_dict = yaml.load(resources_yaml, Loader=SafeLoader)
 
         return resources_dict
 
-    def __get_references(self):
-        resources_dict = self.__get_resources("default")
+    def __references(self, resources):
+        references = self.__filter_resources_by_resource_type(resources, "Observation")
 
-        observations = self.filter_resources_by_resource_type(resources_dict, "Observation")
+        for key in references.keys():
+            try:
+                Observation.validate(references[key])
+            except Exception as e:
+                raise Exception(f"reference {key} is invalid: {e}")
 
-        return observations
+        return references
 
-    def __get_reference_keys(self):
+    def __reference_keys(self):
         return list(self.references.keys())
 
-    def __get_bundles(self):
-        resources_dict = self.__get_resources("default")
-        bundles = self.filter_resources_by_resource_type(resources_dict, "Bundle")
+    def __bundles(self, resources):
+        bundles = self.__filter_resources_by_resource_type(resources, "Bundle")
+ 
+        for key in bundles.keys():
+            try:
+                Bundle.validate(bundles[key])
+            except Exception as e:
+                raise Exception(f"bundle {key} is invalid: {e}")
 
         return bundles
 
-    def __get_bundle_keys(self):
+    def __bundle_keys(self):
         return list(self.bundles.keys())
 
-    def __get_acronyms(self):
+    def __acronyms(self):
         acronym_files = glob.glob(f"backend/src/api/resources/{self.organization}/acronyms/*.yaml")
         acronyms_str = self.__concat_yaml_files(acronym_files)
         acronyms_dict = yaml.load(acronyms_str, Loader=SafeLoader)
@@ -67,7 +80,7 @@ class Resource:
 
         return yaml_str
 
-    def filter_resources_by_resource_type(self, resources: dict, resource_type: str) -> dict:
+    def __filter_resources_by_resource_type(self, resources: dict, resource_type: str) -> dict:
         filtered_resources = {}
         for key, value in resources.items():
             if value['resourceType'] == resource_type:

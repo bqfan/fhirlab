@@ -1,5 +1,6 @@
 sodium: &sodium
   resourceType: Observation
+  status: unknown
   code:
     coding:
       - code: 2947-0
