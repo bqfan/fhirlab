@@ -1,5 +1,6 @@
 potassium: &potassium
   resourceType: Observation
+  status: unknown
   code:
     coding:
       - code: 82722-0

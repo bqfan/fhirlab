@@ -1,7 +1,10 @@
 import glob
+from fastapi import status, HTTPException
 import yaml, json
 from yaml import SafeLoader
 from backend.src.api.models.schemas.references import Reference
+from fhir.resources.observation import Observation
+from fhir.resources.bundle import Bundle
 
 class Resource:
     BaseUrl = "http://localhost:8080"
@@ -37,6 +40,12 @@ class Resource:
     def __references(self, resources):
         references = self.__filter_resources_by_resource_type(resources, "Observation")
 
+        for key in references.keys():
+            try:
+                Observation.validate(references[key])
+            except Exception as e:
+                raise Exception(f"reference {key} is invalid: {e}")
+
         return references
 
     def __reference_keys(self):
@@ -44,6 +53,12 @@ class Resource:
 
     def __bundles(self, resources):
         bundles = self.__filter_resources_by_resource_type(resources, "Bundle")
+ 
+        for key in bundles.keys():
+            try:
+                Bundle.validate(bundles[key])
+            except Exception as e:
+                raise Exception(f"bundle {key} is invalid: {e}")
 
         return bundles
 
