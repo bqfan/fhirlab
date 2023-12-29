@@ -144,7 +144,7 @@ def get_reference_code_by_key(key: ReferenceKeys) -> Code:
     return referenceCode
 
 @app.post("/Observation/_references/{key}", summary="Generate observation result by its reference key", status_code=status.HTTP_201_CREATED, tags=["References"])
-async def evaluate_reference(key: ReferenceKeys, observation:
+async def evaluate_observation(key: ReferenceKeys, observation:
                              Annotated[dict,
                                        Body(
                                             examples=[
@@ -268,6 +268,12 @@ async def evaluate_reference(key: ReferenceKeys, observation:
     response = observation | reference
     response["text"] = text
     response["interpretation"] = interpretation
+
+    try:
+        Observation.validate(response)
+    except Exception as e:
+        raise Exception(f"observation {key} is invalid: {e}")
+
     return response
 
 @app.get("/Bundles/_references", summary="Returns all bundle references", status_code=status.HTTP_200_OK, tags=["Bundles"])
