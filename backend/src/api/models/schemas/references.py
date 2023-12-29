@@ -104,7 +104,7 @@ class ObservationPayload(BaseModel):
         }
     }
 
-class Bundle(BaseModel):
+class BundleModel(BaseModel):
     resourceType: str
     entry: list
 

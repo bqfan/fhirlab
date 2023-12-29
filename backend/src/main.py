@@ -1,14 +1,18 @@
 from heapq import merge
 import json
 from fastapi import Body, FastAPI, status, HTTPException, Depends
+from fhir.resources.observation import Observation
+from fhir.resources.bundle import Bundle
 from typing import Annotated, Final, List
 from fastapi.responses import RedirectResponse
 from backend.src.api.resources.resource_loader import Resource
 # from pydantic import BaseModel, create_model
 from fastapi.middleware.cors import CORSMiddleware
-from backend.src.api.models.schemas.references import CodingItem, Code, High, Low, Reference, ReferenceRangeItem, ObservationPayload, Bundle, Acronyms, TempEnum
-from fhir.resources.observation import Observation
+from backend.src.api.models.schemas.references import CodingItem, Code, High, Low, Reference, ReferenceRangeItem, ObservationPayload, BundleModel, Acronyms, TempEnum
+
+
 from starlette.status import HTTP_404_NOT_FOUND, HTTP_200_OK, HTTP_422_UNPROCESSABLE_ENTITY
+
 # from . import models
 # from .database import engine
 # from .routers import post, user, auth, vote
@@ -286,7 +290,7 @@ def get_bundles() -> dict:
 def get_bundle_keys() -> list:
     return resource.bundle_keys
 
-@app.get("/Bundles/{key}/_references", summary="Returns a bundle's references by bundle key", status_code=status.HTTP_200_OK, response_model=Bundle, response_model_exclude_unset=True, tags=["Bundles"])
+@app.get("/Bundles/{key}/_references", summary="Returns a bundle's references by bundle key", status_code=status.HTTP_200_OK, response_model=BundleModel, response_model_exclude_unset=True, tags=["Bundles"])
 def get_bundle_by_key(key: BundleKeys):
     try:
         __bundle_formatter()
@@ -296,6 +300,228 @@ def get_bundle_by_key(key: BundleKeys):
                             detail=f"bundle key {key} not found")
 
     return bundle
+
+@app.post("/Bundles/{key}/_references", summary="Generate bundle result by its bundle key", status_code=status.HTTP_201_CREATED, tags=["Bundles"])
+async def evaluate_bundle(key: BundleKeys, bundle_payload:
+                             Annotated[dict,
+                                       Body(
+                                            examples=[
+                                                {
+                                                    "resourceType" : "Bundle",
+                                                    "id" : "lipids",
+                                                    "type" : "collection",
+                                                    "entry" : [{
+                                                        "fullUrl" : "https://example.com/base/DiagnosticReport/lipids",
+                                                        "resource" : {
+                                                        "resourceType" : "DiagnosticReport",
+                                                        "id" : "lipids",
+                                                        "identifier" : [{
+                                                            "system" : "http://acme.com/lab/reports",
+                                                            "value" : "5234342"
+                                                        }],
+                                                        "status" : "final",
+                                                        "category" : [{
+                                                            "coding" : [{
+                                                            "system" : "http://terminology.hl7.org/CodeSystem/v2-0074",
+                                                            "code" : "HM"
+                                                            }]
+                                                        }],
+                                                        "code" : {
+                                                            "coding" : [{
+                                                            "system" : "http://loinc.org",
+                                                            "code" : "57698-3",
+                                                            "display" : "Lipid panel with direct LDL - Serum or Plasma"
+                                                            }],
+                                                            "text" : "Lipid Panel"
+                                                        },
+                                                        "subject" : {
+                                                            "reference" : "Patient/pat2"
+                                                        },
+                                                        "effectiveDateTime" : "2011-03-04T08:30:00+11:00",
+                                                        "issued" : "2013-01-27T11:45:33+11:00",
+                                                        "performer" : [{
+                                                            "reference" : "Organization/1832473e-2fe0-452d-abe9-3cdb9879522f",
+                                                            "display" : "Acme Laboratory, Inc"
+                                                        }],
+                                                        "result" : [{
+                                                            "id" : "1",
+                                                            "reference" : "Observation/cholesterol"
+                                                        },
+                                                        {
+                                                            "id" : "2",
+                                                            "reference" : "Observation/triglyceride"
+                                                        },
+                                                        {
+                                                            "id" : "3",
+                                                            "reference" : "Observation/hdlcholesterol"
+                                                        },
+                                                        {
+                                                            "id" : "4",
+                                                            "reference" : "Observation/ldlcholesterol"
+                                                        }]
+                                                        }
+                                                    },
+                                                    {
+                                                        "fullUrl" : "https://example.com/base/Observation/cholesterol",
+                                                        "resource" : {
+                                                        "resourceType" : "Observation",
+                                                        "id" : "cholesterol",
+                                                        "status" : "final",
+                                                        "code" : {
+                                                            "coding" : [{
+                                                            "system" : "http://loinc.org",
+                                                            "code" : "35200-5",
+                                                            "display" : "Cholesterol [Moles/​volume] in Serum or Plasma"
+                                                            }],
+                                                            "text" : "Cholesterol"
+                                                        },
+                                                        "subject" : {
+                                                            "reference" : "Patient/pat2"
+                                                        },
+                                                        "performer" : [{
+                                                            "reference" : "Organization/1832473e-2fe0-452d-abe9-3cdb9879522f",
+                                                            "display" : "Acme Laboratory, Inc"
+                                                        }],
+                                                        "valueQuantity" : {
+                                                            "value" : 6.3,
+                                                            "unit" : "mmol/L",
+                                                            "system" : "http://unitsofmeasure.org",
+                                                            "code" : "mmol/L"
+                                                        },
+                                                        "referenceRange" : [{
+                                                            "high" : {
+                                                            "value" : 4.5,
+                                                            "unit" : "mmol/L",
+                                                            "system" : "http://unitsofmeasure.org",
+                                                            "code" : "mmol/L"
+                                                            }
+                                                        }]
+                                                        }
+                                                    },
+                                                    {
+                                                        "fullUrl" : "https://example.com/base/Observation/triglyceride",
+                                                        "resource" : {
+                                                        "resourceType" : "Observation",
+                                                        "id" : "triglyceride",
+                                                        "status" : "final",
+                                                        "code" : {
+                                                            "coding" : [{
+                                                            "system" : "http://loinc.org",
+                                                            "code" : "35217-9",
+                                                            "display" : "Triglyceride [Moles/​volume] in Serum or Plasma"
+                                                            }],
+                                                            "text" : "Triglyceride"
+                                                        },
+                                                        "subject" : {
+                                                            "reference" : "Patient/pat2"
+                                                        },
+                                                        "performer" : [{
+                                                            "reference" : "Organization/1832473e-2fe0-452d-abe9-3cdb9879522f",
+                                                            "display" : "Acme Laboratory, Inc"
+                                                        }],
+                                                        "valueQuantity" : {
+                                                            "value" : 1.3,
+                                                            "unit" : "mmol/L",
+                                                            "system" : "http://unitsofmeasure.org",
+                                                            "code" : "mmol/L"
+                                                        },
+                                                        "referenceRange" : [{
+                                                            "high" : {
+                                                            "value" : 2.0,
+                                                            "unit" : "mmol/L",
+                                                            "system" : "http://unitsofmeasure.org",
+                                                            "code" : "mmol/L"
+                                                            }
+                                                        }]
+                                                        }
+                                                    },
+                                                    {
+                                                        "fullUrl" : "https://example.com/base/Observation/hdlcholesterol",
+                                                        "resource" : {
+                                                        "resourceType" : "Observation",
+                                                        "id" : "hdlcholesterol",
+                                                        "status" : "final",
+                                                        "code" : {
+                                                            "coding" : [{
+                                                            "system" : "http://loinc.org",
+                                                            "code" : "2085-9",
+                                                            "display" : "HDL Cholesterol"
+                                                            }],
+                                                            "text" : "Cholesterol in HDL"
+                                                        },
+                                                        "subject" : {
+                                                            "reference" : "Patient/pat2"
+                                                        },
+                                                        "performer" : [{
+                                                            "reference" : "Organization/1832473e-2fe0-452d-abe9-3cdb9879522f",
+                                                            "display" : "Acme Laboratory, Inc"
+                                                        }],
+                                                        "valueQuantity" : {
+                                                            "value" : 1.3,
+                                                            "unit" : "mmol/L",
+                                                            "system" : "http://unitsofmeasure.org",
+                                                            "code" : "mmol/L"
+                                                        },
+                                                        "referenceRange" : [{
+                                                            "low" : {
+                                                            "value" : 1.5,
+                                                            "unit" : "mmol/L",
+                                                            "system" : "http://unitsofmeasure.org",
+                                                            "code" : "mmol/L"
+                                                            }
+                                                        }]
+                                                        }
+                                                    },
+                                                    {
+                                                        "fullUrl" : "https://example.com/base/Observation/ldlcholesterol",
+                                                        "resource" : {
+                                                        "resourceType" : "Observation",
+                                                        "id" : "ldlcholesterol",
+                                                        "status" : "final",
+                                                        "code" : {
+                                                            "coding" : [{
+                                                            "system" : "http://loinc.org",
+                                                            "code" : "13457-7",
+                                                            "display" : "Cholesterol in LDL [Mass/volume] in Serum or Plasma by calculation"
+                                                            }],
+                                                            "text" : "LDL Chol. (Calc)"
+                                                        },
+                                                        "subject" : {
+                                                            "reference" : "Patient/pat2"
+                                                        },
+                                                        "performer" : [{
+                                                            "reference" : "Organization/1832473e-2fe0-452d-abe9-3cdb9879522f",
+                                                            "display" : "Acme Laboratory, Inc"
+                                                        }],
+                                                        "valueQuantity" : {
+                                                            "value" : 4.6,
+                                                            "unit" : "mmol/L",
+                                                            "system" : "http://unitsofmeasure.org",
+                                                            "code" : "mmol/L"
+                                                        },
+                                                        "referenceRange" : [{
+                                                            "high" : {
+                                                            "value" : 3.0,
+                                                            "unit" : "mmol/L",
+                                                            "system" : "http://unitsofmeasure.org",
+                                                            "code" : "mmol/L"
+                                                            }
+                                                        }]
+                                                    }
+                                                }]
+                                                }
+                                            ]
+                                       )]):
+
+    try:
+        Bundle.validate(bundle_payload)
+    except Exception as e:
+        raise Exception(f"bundle is invalid: {e}")
+
+    bundle = get_bundle_by_key(key)
+    # print(bundle)
+    return bundle
+
 
 def __bundle_formatter():
     for _, value in resource.bundles.items():
