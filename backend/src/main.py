@@ -91,19 +91,19 @@ for key in resource.acronyms:
 
 AcronymKeys = TempEnum("BundleKeys", acronym_keys)
 
-@app.get("/Observation/_references", summary="Returns all references", status_code=status.HTTP_200_OK, tags=["References"])
+@app.get("/Observation/_references", summary="Returns all observation references", status_code=status.HTTP_200_OK, tags=["References"])
 def get_references() -> dict:
     return resource.references
 
-@app.get("/Observation/_references/_keys", summary="Returns all reference keys", status_code=status.HTTP_200_OK, tags=["References"])
+@app.get("/Observation/_references/_keys", summary="Returns all observation reference keys", status_code=status.HTTP_200_OK, tags=["References"])
 def get_reference_keys() -> list:
     return resource.reference_keys
 
-@app.get("/Observation/_references/_acronyms", summary="Returns all reference acronyms", status_code=status.HTTP_200_OK, tags=["References"])
+@app.get("/Observation/_references/_acronyms", summary="Returns all observation reference acronyms", status_code=status.HTTP_200_OK, tags=["References"])
 def get_acronyms() -> dict:
     return resource.acronyms
 
-@app.get("/Observation/_references/_acronyms/{key}", summary="Returns a reference by its acronmy", status_code=status.HTTP_200_OK, tags=["References"])
+@app.get("/Observation/_references/_acronyms/{key}", summary="Returns an observation reference by its acronmy", status_code=status.HTTP_200_OK, tags=["References"])
 def get_reference_by_acronym(key: AcronymKeys):
     try:
         acronym_value = resource.acronyms[key]
@@ -113,7 +113,7 @@ def get_reference_by_acronym(key: AcronymKeys):
 
     return get_reference_by_key(acronym_value)
 
-@app.get("/Observation/_references/{key}", summary="Returns a reference by its reference key", status_code=status.HTTP_200_OK, response_model=Reference, response_model_exclude_unset=True, tags=["References"])
+@app.get("/Observation/_references/{key}", summary="Returns an observation reference by its reference key", status_code=status.HTTP_200_OK, response_model=Reference, response_model_exclude_unset=True, tags=["References"])
 def get_reference_by_key(key: ReferenceKeys):
     try:
         reference = resource.references[key]
@@ -123,7 +123,7 @@ def get_reference_by_key(key: ReferenceKeys):
 
     return reference
 
-@app.get("/Observation/_references/{key}/_referenceRange", summary="Returns reference range by its reference key", status_code=status.HTTP_200_OK, response_model=list[ReferenceRangeItem], response_model_exclude_unset=True, tags=["References"])
+@app.get("/Observation/_references/{key}/_referenceRange", summary="Returns observation reference range by its reference key", status_code=status.HTTP_200_OK, response_model=list[ReferenceRangeItem], response_model_exclude_unset=True, tags=["References"])
 def get_reference_range_by_key(key: ReferenceKeys):
     try:
         referenceRange = resource.references[key]["referenceRange"]
@@ -133,7 +133,7 @@ def get_reference_range_by_key(key: ReferenceKeys):
 
     return referenceRange
 
-@app.get("/Observation/_references/{key}/_code", summary="Returns reference code by its reference key", status_code=status.HTTP_200_OK, tags=["References"])
+@app.get("/Observation/_references/{key}/_code", summary="Returns observation reference code by its reference key", status_code=status.HTTP_200_OK, tags=["References"])
 def get_reference_code_by_key(key: ReferenceKeys) -> Code:
     try:
         referenceCode = resource.references[key]["code"]
