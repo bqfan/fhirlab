@@ -1,6 +1,8 @@
 from heapq import merge
 import json
-from fastapi import Body, FastAPI, status, HTTPException, Depends
+from fastapi import Body, FastAPI, status, HTTPException, Depends, Security
+from pydantic_settings import BaseSettings, SettingsConfigDict
+from fastapi.security.api_key import APIKeyHeader, APIKey
 from typing import Annotated, Final, List
 from fastapi.responses import RedirectResponse
 from backend.src.api.resources.resource_loader import Resource
@@ -38,6 +40,7 @@ tags_metadata = [
      }
 ]
 
+#settings = SettingsConfigDict()
 app = FastAPI(
     title="labtest-api",
     description=description,
@@ -91,20 +94,32 @@ for key in resource.acronyms:
 
 AcronymKeys = TempEnum("BundleKeys", acronym_keys)
 
+API_KEY = "123" #settings.123
+API_KEY_NAME = "Authorization"
+api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=True)
+
+async def get_api_key(
+    api_key_header: str = Security(api_key_header),
+):
+    if api_key_header == API_KEY:
+        return api_key_header
+    else:
+        raise HTTPException(status_code=403)
+
 @app.get("/Observation/_references", summary="Returns all observation references", status_code=status.HTTP_200_OK, tags=["References"])
-def get_references() -> dict:
+def get_references(api_key: APIKey = Depends(get_api_key)) -> dict:
     return resource.references
 
 @app.get("/Observation/_references/_keys", summary="Returns all observation reference keys", status_code=status.HTTP_200_OK, tags=["References"])
-def get_reference_keys() -> list:
+def get_reference_keys(api_key: APIKey = Depends(get_api_key)) -> list:
     return resource.reference_keys
 
 @app.get("/Observation/_references/_acronyms", summary="Returns all observation reference acronyms", status_code=status.HTTP_200_OK, tags=["References"])
-def get_acronyms() -> dict:
+def get_acronyms(api_key: APIKey = Depends(get_api_key)) -> dict:
     return resource.acronyms
 
 @app.get("/Observation/_references/_acronyms/{key}", summary="Returns an observation reference by its acronmy", status_code=status.HTTP_200_OK, tags=["References"])
-def get_reference_by_acronym(key: AcronymKeys):
+def get_reference_by_acronym(key: AcronymKeys, api_key: APIKey = Depends(get_api_key)):
     try:
         acronym_value = resource.acronyms[key]
     except KeyError:
@@ -114,7 +129,7 @@ def get_reference_by_acronym(key: AcronymKeys):
     return get_reference_by_key(acronym_value)
 
 @app.get("/Observation/_references/{key}", summary="Returns an observation reference by its reference key", status_code=status.HTTP_200_OK, response_model=Reference, response_model_exclude_unset=True, tags=["References"])
-def get_reference_by_key(key: ReferenceKeys):
+def get_reference_by_key(key: ReferenceKeys, api_key: APIKey = Depends(get_api_key)):
     try:
         reference = resource.references[key]
     except KeyError:
@@ -124,7 +139,7 @@ def get_reference_by_key(key: ReferenceKeys):
     return reference
 
 @app.get("/Observation/_references/{key}/_referenceRange", summary="Returns observation reference range by its reference key", status_code=status.HTTP_200_OK, response_model=list[ReferenceRangeItem], response_model_exclude_unset=True, tags=["References"])
-def get_reference_range_by_key(key: ReferenceKeys):
+def get_reference_range_by_key(key: ReferenceKeys, api_key: APIKey = Depends(get_api_key)):
     try:
         referenceRange = resource.references[key]["referenceRange"]
     except KeyError:
@@ -134,7 +149,7 @@ def get_reference_range_by_key(key: ReferenceKeys):
     return referenceRange
 
 @app.get("/Observation/_references/{key}/_code", summary="Returns observation reference code by its reference key", status_code=status.HTTP_200_OK, tags=["References"])
-def get_reference_code_by_key(key: ReferenceKeys) -> Code:
+def get_reference_code_by_key(key: ReferenceKeys, api_key: APIKey = Depends(get_api_key)) -> Code:
     try:
         referenceCode = resource.references[key]["code"]
     except KeyError:
@@ -182,7 +197,7 @@ async def evaluate_observation(key: ReferenceKeys, observation:
                                                     }
                                                 }
                                             ]
-                                       )]):
+                                       )], api_key: APIKey = Depends(get_api_key)):
 
     reference = get_reference_by_key(key)
 
@@ -277,17 +292,17 @@ async def evaluate_observation(key: ReferenceKeys, observation:
     return response
 
 @app.get("/Bundles/_references", summary="Returns all bundle references", status_code=status.HTTP_200_OK, tags=["Bundles"])
-def get_bundles() -> dict:
+def get_bundles(api_key: APIKey = Depends(get_api_key)) -> dict:
     __bundle_formatter()
 
     return resource.bundles
 
 @app.get("/Bundles/_keys", summary="Returns all bundle keys", tags=["Bundles"])
-def get_bundle_keys() -> list:
+def get_bundle_keys(api_key: APIKey = Depends(get_api_key)) -> list:
     return resource.bundle_keys
 
 @app.get("/Bundles/{key}/_references", summary="Returns a bundle's references by bundle key", status_code=status.HTTP_200_OK, response_model=Bundle, response_model_exclude_unset=True, tags=["Bundles"])
-def get_bundle_by_key(key: BundleKeys):
+def get_bundle_by_key(key: BundleKeys, api_key: APIKey = Depends(get_api_key)):
     try:
         __bundle_formatter()
         bundle = resource.bundles[key]
