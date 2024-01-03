@@ -27,7 +27,7 @@ labtest-api uses customized FHIR resource paths to fetch lab test references and
 You can **get observation references, acronyms, reference code and ranges**.
 You can **evaluate lab values (observations) against reference ranges**.
 
-## Bundlers
+## Bundles
 
 You can **get bundles references, acronyms**.
 You can **evaluate bundles of observations against reference ranges** (_not implemented_).
