@@ -34,6 +34,7 @@ class ReferenceRangeItem(BaseModel):
 
 class Reference(BaseModel):
     resourceType: str
+    status: str
     code: Code
     referenceRange: list[ReferenceRangeItem]
 
