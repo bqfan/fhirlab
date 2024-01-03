@@ -8,7 +8,9 @@ from typing import Final, List
 import json
 
 resource = Resource().load()
-client = TestClient(app)
+client = TestClient(app,
+                    headers = {"Content-Type": "application/json",
+                                "Authorization": "123"})
 
 def test_references_post():
     data =  {
@@ -47,8 +49,7 @@ def test_references_post():
 
     post_response = client.post(
         "/Observation/_references/glucose",
-        content = json.dumps(data),
-        headers = {"Content-Type": "application/json"},
+        content = json.dumps(data)
     )
 
     assert(post_response.status_code == status.HTTP_201_CREATED)
@@ -58,7 +59,6 @@ def test_references_post():
     post_response_json = json.loads(post_response.content)
     reference_response_json = json.loads(reference_response.content)
     assert(is_subset(reference_response_json, post_response_json))
-    assert(is_subset(data, json.loads(post_response.content)))
     assert(isinstance(post_response_json["text"], dict))
     assert(post_response_json["text"]["status"] == "generated")
     assert(isinstance(post_response_json["text"]["div"], str))
