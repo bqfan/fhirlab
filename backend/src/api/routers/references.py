@@ -13,11 +13,7 @@ router = APIRouter(
     tags=['References']
 )
 
-API_KEY = "123" #settings.123
-API_KEY_NAME = "Authorization"
-
 resource = Resource().load()
-
 
 reference_keys = {}
 for key in resource.reference_keys:
@@ -59,7 +55,7 @@ def get_reference_by_acronym(key: AcronymKeys, api_key: APIKey = Depends(get_api
 
     return get_reference_by_key(acronym_value)
 
-@router.get("//{key}", summary="Returns an observation reference by its reference key", status_code=status.HTTP_200_OK, response_model=Reference, response_model_exclude_unset=True)
+@router.get("/{key}", summary="Returns an observation reference by its reference key", status_code=status.HTTP_200_OK, response_model=Reference, response_model_exclude_unset=True)
 def get_reference_by_key(key: ReferenceKeys, api_key: APIKey = Depends(get_api_key)):
     try:
         reference = resource.references[key]

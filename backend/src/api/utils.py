@@ -1,15 +1,14 @@
 from fastapi import Security, HTTPException
 from fastapi.security import APIKeyHeader
 import json
+from backend.src.config import settings
 
-API_KEY = "123" #settings.123
-API_KEY_NAME = "Authorization"
-api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=True)
+api_key_header = APIKeyHeader(name=settings.api_key_name, auto_error=True)
 
 async def get_api_key(
     api_key_header: str = Security(api_key_header),
 ):
-    if api_key_header == API_KEY:
+    if api_key_header == settings.api_key:
         return api_key_header
     else:
         raise HTTPException(status_code=403)

@@ -3,7 +3,7 @@ from fastapi import APIRouter
 from fastapi.security.api_key import APIKey
 from backend.src.api.resources.resource_loader import Resource
 from backend.src.api.models.schemas.references import Bundle, TempEnum
-from backend.src.api.utils import API_KEY, get_api_key, __bundle_formatter
+from backend.src.api.utils import get_api_key, __bundle_formatter
 
 router = APIRouter(
     prefix="/Bundles",
