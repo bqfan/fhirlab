@@ -10,7 +10,7 @@ from backend.src.api.routers import references, bundles
 # models.Base.metadata.create_all(bind=engine)
 
 description = """
-labtest-api uses customized FHIR resource paths to fetch lab test references and evaluate labvalues and return FHIR compatible resources. 🚀
+fhirlab uses customized FHIR resource paths to fetch lab test references and evaluate labvalues and return FHIR compatible resources. 🚀
 
 ## References
 

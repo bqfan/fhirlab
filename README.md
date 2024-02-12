@@ -1,8 +1,8 @@
-# labtest-api
+# fhirlab
 
 ## Environments
 
-### Run labtest-api in virtual environment venv 
+### Run fhirlab in virtual environment venv 
 
 ```
 python3 -m venv venv 
@@ -14,13 +14,13 @@ This is how you run the code locally (without Docker):
 ```
 uvicorn backend.src.main:app --host 0.0.0.0 --port 8000 --reload
 ```
-### Run labtest-api in Docker 
+### Run fhirlab in Docker 
 As a first step, install Docker (see: https://www.docker.com) and install the requirements:
 Build and run the Docker image locally, as follows:
 
 ```
-docker build -t labtest-api .
-docker run -d -p 8000:80 labtest-api
+docker build -t fhirlab .
+docker run -d -p 8000:80 fhirlab
 ```
 
 In order to run the example server with docker compose, use this:
