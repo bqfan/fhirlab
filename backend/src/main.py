@@ -32,20 +32,23 @@ tags_metadata = [
 
 #settings = SettingsConfigDict()
 app = FastAPI(
-    title="labtest-api",
+    title="fhirlab",
     description=description,
     summary="Healthq Opensource.",
     version="0.0.1",
     terms_of_service="http://example.com/terms/",
     contact={
         "name": "bqfan",
-        "url": "https://healthq.dev",
-        "email": "bqfan@healthq.dev",
+        "url": "https://healthq.io",
+        "email": "bqfan@healthq.io",
     },
     license_info={
         "name": "Apache 2.0",
         "url": "https://www.apache.org/licenses/LICENSE-2.0.html",
-    },    
+    },
+    docs_url="/api/docs",
+    redoc_url="/api/redoc",
+    openapi_url="/api/openapi.json",
     openapi_tags=tags_metadata
 )
 

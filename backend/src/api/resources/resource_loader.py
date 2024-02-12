@@ -7,10 +7,10 @@ from fhir.resources.observation import Observation
 from fhir.resources.bundle import Bundle
 
 class Resource:
-    BaseUrl = "http://localhost:8080"
+    BaseUrl = "http://localhost:8000"
 
     def __init__(self, organization: str="default"):
-        self.base_url = "http://localhost:8080"
+        self.base_url = "http://localhost:8000"
         self.organization = organization
         self.references = {}
         self.reference_keys = {}
