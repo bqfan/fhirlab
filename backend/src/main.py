@@ -1,4 +1,4 @@
-from fastapi import Body, FastAPI
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from backend.src.api.routers import references, bundles
 # from . import models
@@ -24,13 +24,13 @@ You can **evaluate bundles of observations against reference ranges** (_not impl
 """
 tags_metadata = [
     {"name": "References",
-     "description": "Reference values (intervals) for blood, urine, cerebrospinal fluid (CSF), stool, and other fluids (eg, gastric acid). In FHIR, observation resources can be used to describe observations which may need to be evaluated in order to determine whether a specific medicine can be administered or held (e.g., weight, lab value result) and provide guidance on the dose to be administered (e.g., sliding scale insulin dose)." },
+     "description": "Reference values (intervals) for blood, urine, cerebrospinal fluid (CSF), stool, and other fluids (eg, gastric acid). In FHIR, observation resources can be used to describe observations which may need to be evaluated in order to determine whether a specific medicine can be administered or held (e.g., weight, lab value result) and provide guidance on the dose to be administered (e.g., sliding scale insulin dose)."},
     {"name": "Bundles",
      "description": "In FHIR bundles is referred to as \"bundling\" the resources together."
      }
 ]
 
-#settings = SettingsConfigDict()
+# settings = SettingsConfigDict()
 app = FastAPI(
     title="fhirlab",
     description=description,
@@ -64,10 +64,3 @@ app.add_middleware(
 
 app.include_router(references.router)
 app.include_router(bundles.router)
-
-
-
-
-
-
-
