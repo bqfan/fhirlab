@@ -1,4 +1,4 @@
-from fastapi import Body, status, HTTPException, Depends, Security
+from fastapi import status, HTTPException, Depends
 from fastapi import APIRouter
 from fastapi.security.api_key import APIKey
 from backend.src.api.resources.resource_loader import Resource
@@ -30,17 +30,28 @@ for key in resource.acronyms:
 
 AcronymKeys = TempEnum("BundleKeys", acronym_keys)
 
-@router.get("/_references", summary="Returns all bundle references", status_code=status.HTTP_200_OK, tags=["Bundles"])
+
+@router.get("/_references",
+            summary="Returns all bundle references",
+            status_code=status.HTTP_200_OK, tags=["Bundles"])
 def get_bundles(api_key: APIKey = Depends(get_api_key)) -> dict:
     __bundle_formatter(resource)
 
     return resource.bundles
 
-@router.get("/_keys", summary="Returns all bundle keys", tags=["Bundles"])
+
+@router.get("/_keys",
+            summary="Returns all bundle keys",
+            tags=["Bundles"])
 def get_bundle_keys(api_key: APIKey = Depends(get_api_key)) -> list:
     return resource.bundle_keys
 
-@router.get("/{key}/_references", summary="Returns a bundle's references by bundle key", status_code=status.HTTP_200_OK, response_model=Bundle, response_model_exclude_unset=True, tags=["Bundles"])
+
+@router.get("/{key}/_references",
+            summary="Returns a bundle's references by bundle key",
+            status_code=status.HTTP_200_OK,
+            response_model=Bundle,
+            response_model_exclude_unset=True, tags=["Bundles"])
 def get_bundle_by_key(key: BundleKeys, api_key: APIKey = Depends(get_api_key)):
     try:
         __bundle_formatter(resource)

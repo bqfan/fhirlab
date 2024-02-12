@@ -1,16 +1,19 @@
 from __future__ import annotations
 from pydantic import BaseModel, Field
-from typing import List, Optional
+from typing import Optional
 from enum import Enum
+
 
 class CodingItem(BaseModel):
     code: str
     display: str
     system: str
 
+
 class Code(BaseModel):
     coding: list[CodingItem]
     text: str
+
 
 class High(BaseModel):
     code: str
@@ -18,11 +21,13 @@ class High(BaseModel):
     unit: str
     value: float
 
+
 class Low(BaseModel):
     code: str
     system: str
     unit: str
     value: float
+
 
 class ReferenceRangeItem(BaseModel):
     low: Optional[Low] = None
@@ -30,13 +35,21 @@ class ReferenceRangeItem(BaseModel):
     normalValue: Optional[list[str]] = None
     type: Optional[list[str]] = None
     appliesTo: Optional[list[list[str]]] = None
-    age: Optional[list[int]] = Field(None, json_schema_extra={ "ge":0, "le":150, "min_length":2, "max_length":2, "description":"age", "example":[50, 70] })
+    age: Optional[list[int]] = Field(None, json_schema_extra={
+        "ge": 0,
+        "le": 150,
+        "min_length": 2,
+        "max_length": 2,
+        "description": "age",
+        "example": [50, 70]})
+
 
 class Reference(BaseModel):
     resourceType: str
     status: str
     code: Code
     referenceRange: list[ReferenceRangeItem]
+
 
 class ValueQuantity(BaseModel):
     value: float
@@ -56,11 +69,12 @@ class ValueQuantity(BaseModel):
         }
     }
 
+
 class ObservationPayload(BaseModel):
-    resourceType: str="Observation"
+    resourceType: str = "Observation"
     id: str
     meta: dict
-    status: str="final"
+    status: str = "final"
     code: Code
     subject: dict
     effectivePeriod: dict
@@ -79,11 +93,11 @@ class ObservationPayload(BaseModel):
                     "status": "final",
                     "code": {
                         "coding": [
-                        {
-                            "code": "15074-8",
-                            "display": "Glucose [Moles/volume] in Blood",
-                            "system": "http://loinc.org"
-                        }
+                            {
+                                "code": "15074-8",
+                                "display": "Glucose [Moles/volume] in Blood",
+                                "system": "http://loinc.org"
+                            }
                         ],
                         "text": "Glucose"
                     },
@@ -105,13 +119,16 @@ class ObservationPayload(BaseModel):
         }
     }
 
+
 class Bundle(BaseModel):
     resourceType: str
     entry: list
 
+
 class Acronyms(str, Enum):
     true = True
     false = False
+
 
 class TempEnum(str, Enum):
     pass
