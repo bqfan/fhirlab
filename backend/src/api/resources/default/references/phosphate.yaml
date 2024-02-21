@@ -1,20 +1,20 @@
-glucose: &glucose
+phosphate: &phosphate
   resourceType: Observation
   status: unknown
   code:
     coding:
       - system: http://loinc.org
-        code: 15074-8
-        display: Glucose [Moles/volume] in Blood
-    text: Glucose
+        code: 49765-1
+        display: Phosphate [Mass/volume] in Serum or Plasma
+    text: Phosphate
   referenceRange:
     - high:
         system: http://unitsofmeasure.org
         code: mmol/L
-        unit: mmol/l
-        value: 6.2
+        unit: mmol/L
+        value: 1.52
       low:
         system: http://unitsofmeasure.org
         code: mmol/L
-        unit: mmol/l
-        value: 3.1
+        unit: mmol/L
+        value: 0.74

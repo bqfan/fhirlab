@@ -1,0 +1,20 @@
+alkaline_phosphatase: &alkaline_phosphatase
+  resourceType: Observation
+  status: unknown
+  code:
+    coding:
+      - system: http://loinc.org
+        code: 6768-6
+        display: Alkaline phosphatase [Enzymatic activity/volume] in Serum or Plasma
+    text: Alkaline phosphatase
+  referenceRange:
+    - high:
+        system: http://unitsofmeasure.org
+        code: U/L
+        unit: U/L
+        value: 120
+      low:
+        system: http://unitsofmeasure.org
+        code: U/L
+        unit: U/L
+        value: 50

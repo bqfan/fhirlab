@@ -1,4 +1,4 @@
-BUN: blood-urea-nitrogen
+BUN: blood_urea_nitrogen
 Ca: calcium
 HDL: hdlcholesterol
 K: potassium
@@ -6,3 +6,9 @@ LDL: ldlcholesterol
 NA: sodium
 TGL: triglyceride
 Trig: triglyceride
+
+# Bundles
+BMP: basic_metabolic_panel
+CMP: comprehensive_metabolic_panel
+ELEC: electrolyte_panel
+RFP: renal_function_panel 

@@ -1,4 +1,4 @@
-blood-urea-nitrogen: &blood-urea-nitrogen
+blood_urea_nitrogen: &blood_urea_nitrogen
   resourceType: Observation
   status: unknown
   code:

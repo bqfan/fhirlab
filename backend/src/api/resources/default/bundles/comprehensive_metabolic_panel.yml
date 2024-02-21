@@ -1,0 +1,32 @@
+comprehensive_metabolic_panel:
+  resourceType: Bundle
+  id: comprehensive-metabolic-panel
+  type: collection
+  entry:
+    - fullUrl: BaseUrl/Bundles/comprehensive_metabolic_panel/_references
+      resource:
+        resourceType: DiagnosticReport
+        status: unkown
+        id: comprehensive-metabolic-panel
+        category:
+          - coding:
+              - system: http://terminology.hl7.org/CodeSystem/v2-0074
+                code: HM
+        code:
+          coding:
+            - system: http://loinc.org
+              code: 24323-8
+              display: Comprehensive metabolic 2000 panel - Serum or Plasma
+          text: Comprehensive metabolic 2000 panel
+    - fullUrl: BaseUrl/Observation/_references/sodium
+      resource: *sodium
+    - fullUrl: BaseUrl/Observation/_references/potassium
+      resource: *potassium
+    - fullUrl: BaseUrl/Observation/_references/chloride
+      resource: *chloride
+    - fullUrl: BaseUrl/Observation/_references/glucose
+      resource: *glucose
+    - fullUrl: BaseUrl/Observation/_references/creatinine
+      resource: *creatinine
+    - fullUrl: BaseUrl/Observation/_references/blood_urea_nitrogen
+      resource: *blood_urea_nitrogen

@@ -1,4 +1,4 @@
-creatinine:
+creatinine: &creatinine
   resourceType: Observation
   status: unknown
   code:

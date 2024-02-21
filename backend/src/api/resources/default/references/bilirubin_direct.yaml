@@ -1,0 +1,16 @@
+bilirubin_direct: &bilirubin_direct
+  resourceType: Observation
+  status: unknown
+  code:
+    coding:
+      - system: http://loinc.org
+        code: 1968-7
+        display: Bilirubin.direct [Mass/volume] in Serum or Plasma
+    text: Bilirubin.direct
+  referenceRange:
+    - high:
+        system: http://unitsofmeasure.org
+        code: "\u03BCKat/L" # μKat/L
+        unit: "\u03BCKat/L" # μKat/L
+        value: 3.4
+        comparator: '<'

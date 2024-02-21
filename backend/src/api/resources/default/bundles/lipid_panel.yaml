@@ -3,7 +3,7 @@ lipid_panel:
   id: lipids
   type: collection
   entry:
-    - fullUrl: BaseUrl/DiagnosticReport/lipids
+    - fullUrl: BaseUrl/Bundles/lipids/_references
       resource:
         resourceType: DiagnosticReport
         status: unkown
@@ -18,11 +18,11 @@ lipid_panel:
               code: 57698-3
               display: Lipid panel with direct LDL - Serum or Plasma
           text: Lipid Panel
-    - fullUrl: BaseUrl/References/cholesterol
+    - fullUrl: BaseUrl/Observation/_references/cholesterol
       resource: *cholesterol
-    - fullUrl: BaseUrl/References/triglyceride
+    - fullUrl: BaseUrl/Observation/_references/triglyceride
       resource: *triglyceride
-    - fullUrl: BaseUrl/References/hdlcholesterol
+    - fullUrl: BaseUrl/Observation/_references/hdlcholesterol
       resource: *hdlcholesterol
-    - fullUrl: BaseUrl/References/ldlcholesterol
+    - fullUrl: BaseUrl/Observation/_references/ldlcholesterol
       resource: *ldlcholesterol

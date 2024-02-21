@@ -1,0 +1,20 @@
+alanine_aminotransferase: &alanine_aminotransferase
+  resourceType: Observation
+  status: unknown
+  code:
+    coding:
+      - system: http://loinc.org
+        code: 1742-6
+        display: Alanine aminotransferase [Enzymatic activity/volume] in Serum or Plasma
+    text: Alanine aminotransferase
+  referenceRange:
+    - high:
+        system: http://unitsofmeasure.org
+        code: U/L
+        unit: U/L
+        value: 40
+      low:
+        system: http://unitsofmeasure.org
+        code: U/L
+        unit: U/L
+        value: 10

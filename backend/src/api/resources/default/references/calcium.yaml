@@ -10,11 +10,11 @@ calcium: &calcium
   referenceRange:
     - high:
         system: http://unitsofmeasure.org
-        code: mg/dL
-        unit: mg/dL
-        value: 11
+        code: mmol/L
+        unit: mmol/L
+        value: 2.55
       low:
         system: http://unitsofmeasure.org
-        code: mg/dL
-        unit: mg/dL
-        value: 8
+        code: mmol/L
+        unit: mmol/L
+        value: 2.05

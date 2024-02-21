@@ -1,20 +1,20 @@
-glucose: &glucose
+carbon_dioxide: &carbon_dioxide
   resourceType: Observation
   status: unknown
   code:
     coding:
       - system: http://loinc.org
-        code: 15074-8
-        display: Glucose [Moles/volume] in Blood
-    text: Glucose
+        code: 20565-8
+        display: Carbon dioxide, total [Moles/volume] in Blood
+    text: Carbon dioxide
   referenceRange:
     - high:
         system: http://unitsofmeasure.org
         code: mmol/L
-        unit: mmol/l
-        value: 6.2
+        unit: mmol/L
+        value: 28
       low:
         system: http://unitsofmeasure.org
         code: mmol/L
-        unit: mmol/l
-        value: 3.1
+        unit: mmol/L
+        value: 22
