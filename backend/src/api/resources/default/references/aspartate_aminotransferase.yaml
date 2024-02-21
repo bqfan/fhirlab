@@ -1,0 +1,20 @@
+aspartate_aminotransferase: &aspartate_aminotransferase
+  resourceType: Observation
+  status: unknown
+  code:
+    coding:
+      - system: http://loinc.org
+        code: 1920-8
+        display: Aspartate aminotransferase [Enzymatic activity/volume] in Serum or Plasma
+    text: Aspartate aminotransferase
+  referenceRange:
+    - high:
+        system: http://unitsofmeasure.org
+        code: "\u03BCKat/L" # μKat/L
+        unit: "\u03BCKat/L" # μKat/L
+        value: 0.82
+      low:
+        system: http://unitsofmeasure.org
+        code: "\u03BCKat/L" # μKat/L
+        unit: "\u03BCKat/L" # μKat/L
+        value: 0.34

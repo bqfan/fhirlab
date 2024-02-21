@@ -89,17 +89,17 @@ class Code(BaseModel):
 class ReferenceRangeLow(BaseModel):
     value: float    # Numerical value (with implicit precision)
     comparator: Optional[Literal['<', '<=', '>=', '>']] = None # < | <= | >= | > - how to understand the value
-    unit: Literal['mmHg', 'mmol/l', 'mmol/L', 'mg/dL', 'g/dl']   # Unit representation
+    unit: Literal['mmHg', 'mmol/l', 'mmol/L', 'mg/dL', 'g/dl', 'μKat/L', 'U/L', 'g/L']   # Unit representation
     system: Literal['http://unitsofmeasure.org']    # System that defines coded unit form
-    code: Literal['mm[Hg]', 'mmol/L', 'mg/dL', 'g/dL']  # Coded form of the unit
+    code: Literal['mm[Hg]', 'mmol/L', 'mg/dL', 'g/dL', 'μKat/L', 'U/L', 'g/L']  # Coded form of the unit
 
 
 class ReferenceRangeHigh(BaseModel):
     value: float    # Numerical value (with implicit precision)
     comparator: Optional[Literal['<', '<=', '>=', '>']] = None # < | <= | >= | > - how to understand the value
-    unit: Literal['mmHg', 'mmol/l', 'mmol/L', 'mg/dL', 'g/dl']   # Unit representation
+    unit: Literal['mmHg', 'mmol/l', 'mmol/L', 'mg/dL', 'g/dl', 'μKat/L', 'U/L', 'g/L']   # Unit representation
     system: Literal['http://unitsofmeasure.org']    # System that defines coded unit form
-    code: Literal['mm[Hg]', 'mmol/L', 'mg/dL', 'g/dL']  # Coded form of the unit
+    code: Literal['mm[Hg]', 'mmol/L', 'mg/dL', 'g/dL', 'μKat/L', 'U/L', 'g/L']  # Coded form of the unit
 
 
 class ReferenceRange(BaseModel):

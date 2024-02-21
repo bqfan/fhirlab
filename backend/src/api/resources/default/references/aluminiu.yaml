@@ -1,0 +1,20 @@
+aluminium: &aluminium
+  resourceType: Observation
+  status: unknown
+  code:
+    coding:
+      - system: http://loinc.org
+        code: 82463-1
+        display: Aluminum [Moles/volume] in Blood
+    text: Aluminum
+  referenceRange:
+    - high:
+        system: http://unitsofmeasure.org
+        code: g/L
+        unit: g/L
+        value: 50
+      low:
+        system: http://unitsofmeasure.org
+        code: g/L
+        unit: g/L
+        value: 35

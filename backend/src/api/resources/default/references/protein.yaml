@@ -1,0 +1,20 @@
+protein: &protein
+  resourceType: Observation
+  status: unknown
+  code:
+    coding:
+      - code: 2885-2
+        display: Protein [Mass/volume] in Serum or Plasma
+        system: http://loinc.org
+    text: Protein
+  referenceRange:
+    - high:
+        code: g/L
+        system: http://unitsofmeasure.org
+        unit: g/L
+        value: 80
+      low:
+        system: http://unitsofmeasure.org
+        code: g/L
+        unit: g/L
+        value: 60

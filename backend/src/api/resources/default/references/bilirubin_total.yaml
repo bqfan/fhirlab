@@ -1,0 +1,20 @@
+bilirubin_total: &bilirubin_total
+  resourceType: Observation
+  status: unknown
+  code:
+    coding:
+      - system: http://loinc.org
+        code: 1975-2
+        display: Bilirubin.total [Mass/volume] in Serum or Plasma
+    text: Bilirubin.total
+  referenceRange:
+    - high:
+        system: http://unitsofmeasure.org
+        code: "\u03BCKat/L" # μKat/L
+        unit: "\u03BCKat/L" # μKat/L
+        value: 18
+      low:
+        system: http://unitsofmeasure.org
+        code: "\u03BCKat/L" # μKat/L
+        unit: "\u03BCKat/L" # μKat/L
+        value: 2.2

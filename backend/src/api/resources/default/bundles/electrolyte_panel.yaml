@@ -1,0 +1,30 @@
+electrolyte_panel:
+  resourceType: Bundle
+  id: electrolyte-panel
+  type: collection
+  entry:
+    - fullUrl: BaseUrl/Bundles/electrolyte_panel/_references
+      resource:
+        resourceType: DiagnosticReport
+        status: unkown
+        id: electrolyte-panel
+        category:
+          - coding:
+              - system: http://terminology.hl7.org/CodeSystem/v2-0074
+                code: HM
+        code:
+          coding:
+            - system: http://loinc.org
+              code: 55231-5
+              display: Electrolytes panel - Blood
+          text: Electrolytes panel
+    - fullUrl: BaseUrl/Observation/_references/sodium
+      resource: *sodium
+    - fullUrl: BaseUrl/Observation/_references/potassium
+      resource: *potassium
+    - fullUrl: BaseUrl/Observation/_references/chloride
+      resource: *chloride
+    - fullUrl: BaseUrl/Observation/_references/carbon_dioxide
+      resource: *carbon_dioxide
+    - fullUrl: BaseUrl/Observation/_references/anion_gap
+      resource: *anion_gap
