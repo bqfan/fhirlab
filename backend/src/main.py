@@ -21,6 +21,10 @@ You can **evaluate lab values (observations) against reference ranges**.
 
 You can **get bundles references, acronyms**.
 You can **evaluate bundles of observations against reference ranges** (_not implemented_).
+
+## Authorization
+apiKey: 123
+
 """
 tags_metadata = [
     {"name": "References",
