@@ -6,7 +6,7 @@ from fastapi.security.api_key import APIKey
 from fhir.resources.observation import Observation
 from backend.src.api.resources.resource_loader import Resource
 from backend.src.api.models.schemas.references \
-    import Code, Reference, ReferenceRangeItem, TempEnum
+    import Code, Reference, ReferenceRange, TempEnum
 from backend.src.api.utils import get_api_key, \
     __check_semantic_interoperable, __check_unit
 
@@ -90,7 +90,7 @@ def get_reference_by_key(key: ReferenceKeys,
 @router.get("/{key}/_referenceRange",
             summary="Returns observation reference range by its reference key",
             status_code=status.HTTP_200_OK,
-            response_model=list[ReferenceRangeItem],
+            response_model=list[ReferenceRange],
             response_model_exclude_unset=True)
 def get_reference_range_by_key(key: ReferenceKeys,
                                api_key: APIKey = Depends(get_api_key)):

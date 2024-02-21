@@ -3,7 +3,7 @@ from fastapi import status
 from fastapi.testclient import TestClient
 from backend.src.main import app
 from backend.src.api.resources.resource_loader import Resource
-from backend.src.api.models.schemas.references import Bundle, Code, Reference, ReferenceRangeItem
+from backend.src.api.models.schemas.references import Bundle, Code, Reference, ReferenceRange
 from typing import List
 import json
 
@@ -132,8 +132,8 @@ def test_reference_range():
     response_content_json = json.loads(response.content)
 
     assert response.status_code == status.HTTP_200_OK
-    assert isinstance(ReferenceRangeItem(**resource.references['glucose']['referenceRange'][0]), ReferenceRangeItem)
-    assert isinstance(ReferenceRangeItem(**response_content_json[0]), ReferenceRangeItem)
+    assert isinstance(ReferenceRange(**resource.references['glucose']['referenceRange'][0]), ReferenceRange)
+    assert isinstance(ReferenceRange(**response_content_json[0]), ReferenceRange)
     assert is_subset(resource.references['glucose']['referenceRange'], response_content_json)
 
 
